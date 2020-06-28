@@ -1,0 +1,10 @@
+---
+title: "Recommended Resources"
+output: html_document
+---
+
+
+# Data processing in R
+
+
+# Mixed effects models

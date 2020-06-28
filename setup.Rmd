@@ -1,0 +1,60 @@
+---
+title: "Before the workshop"
+output: 
+  html_document:
+    toc: true
+    toc_float:
+      collapsed: false
+---
+
+# 1. Setting up your physical work environment 
+
+The majority of the workshop will be "code-along" - i.e., we will be working through the material live using R, and you follow the same steps on your own computer. You will find this much easier if you have access to another monitor of some kind, so that you are able to see Zoom and RStudio at the same time. However, not everyone will have this set-up, and we will leave time for making some adjustments at the start of the workshop.
+
+
+# 2. Accessing the workshop
+
+### Zoom
+
+We will be running the workshop through Zoom. We will circulate the meeting details directly via email to avoid any unwanted visitors! 
+
+Zoom can run through your web browser, you will just need to give it permission after clicking the link. If you've not used Zoom before, then try clicking the link to the meeting ahead of time, which will start the download for the web browser client (and just close Zoom again after). Alternatively you can download the 'Zoom Client for Meetings' [here](https://zoom.us/download#client_4meeting). There are also options there for Zoom on mobile apps, in case you have something appropriate to use as a second monitor.  
+
+
+### Slack 
+
+We will use a Slack workspace for asking questions and sharing resources throughout the workshop. 
+
+Please join the Slack workspace ahead of the meeting by clicking on this link: [https://join.slack.com/t/ysjrworkshop/shared_invite/zt-f9an6fno-1MwZkfYOYoSC8RWTd2ekUQ](https://join.slack.com/t/ysjrworkshop/shared_invite/zt-f9an6fno-1MwZkfYOYoSC8RWTd2ekUQ) 
+
+You can use Slack from your web browser, or download the Desktop app if you prefer. 
+
+Not used Slack before? Don't worry! We will go through everything you need to know at the start of the workshop. 
+
+# 3. R Software set-up
+
+### Downloading R and R Studio
+
+You will need to have R and R Studio to installed to follow along with the workshop. R is the programming language itself, whereas RStudio is the user interface for interacting with R.  
+
+* To download R: https://cran.r-project.org/  
+* To download RStudio: https://rstudio.com/products/rstudio/download/#download (just the free Desktop version)
+
+
+Some additional guidance can be found [here](https://datacarpentry.org/r-socialsci/setup.html) if you need it.
+
+### Installing relevant packages
+
+We will use two R packages during the workshop (don't worry - we'll cover what packages are in more detail later!). We will use the `tidyverse` for manipulating data, and `lme4` for fitting mixed effects models.
+
+To get a headstart with fixing any issues, please install them before the workshop. To do this, open up RStudio and type the following into the console (the main window that opens up, with `>` waiting for you to type).
+
+```{r eval = FALSE}
+install.packages(c("tidyverse", "lme4"))
+```
+
+Hit the return key and let it do its magic. Don't worry about the red text that flashes up - that's normal! The final messages should say that each package is *"successfully unpacked and MD5 sums checked"*. If you don't get to this point, reach out to us on the Slack channel (or you can email [emma.james@york.ac.uk](emma.james@york.ac.uk)).
+
+# 4. Pre-workshop Survey
+
+Finally, please fill out [this short anonymous survey](https://docs.google.com/forms/d/e/1FAIpQLScMYWoy0yHa1MUnMqksYW_XiCi9SwnwmExbgEfC2_G6RiLoZQ/viewform?usp=sf_link) to let us know your previous experience and what you hope to gain from the workshop. 
