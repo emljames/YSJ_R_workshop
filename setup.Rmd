@@ -1,15 +1,6 @@
 ---
 title: "Before the workshop"
-knit: (function(input_file, encoding) {
-  out_dir <- 'docs';
-  rmarkdown::render(input_file,
- encoding=encoding,
- output_file=file.path(dirname(input_file), out_dir, 'setup.html'))})
-output: 
-  html_document:
-    toc: true
-    toc_float:
-      collapsed: false
+
 ---
 
 # 1. Setting up your physical work environment 
@@ -40,11 +31,10 @@ Not used Slack before? Don't worry! We will go through everything you need to kn
 
 ### Downloading R and R Studio
 
-You will need to have R and R Studio to installed to follow along with the workshop. R is the programming language itself, whereas RStudio is the user interface for interacting with R.  
+You will need to have R and R Studio to installed to follow along with the workshop. R is the programming language itself, whereas RStudio is the user interface for interacting with R. **We will be using the latest versions of each (R version 4.0.2, RStudio v.1.3.959), so please make sure your software is up-to-date to avoid issues.**
 
 * To download R: https://cran.r-project.org/  
 * To download RStudio: https://rstudio.com/products/rstudio/download/#download (just the free Desktop version)
-
 
 Some additional guidance can be found [here](https://datacarpentry.org/r-socialsci/setup.html) if you need it.
 
@@ -62,4 +52,4 @@ Hit the return key and let it do its magic. Don't worry about the red text that 
 
 # 4. Pre-workshop Survey
 
-Finally, please fill out [this short anonymous survey](https://docs.google.com/forms/d/e/1FAIpQLScMYWoy0yHa1MUnMqksYW_XiCi9SwnwmExbgEfC2_G6RiLoZQ/viewform?usp=sf_link) to let us know your previous experience and what you hope to gain from the workshop. 
+Finally, please fill out [this short anonymous survey](https://docs.google.com/forms/d/e/1FAIpQLScMYWoy0yHa1MUnMqksYW_XiCi9SwnwmExbgEfC2_G6RiLoZQ/viewform?usp=sf_link) to let us know about your previous experience and what you hope to gain from the workshop. 

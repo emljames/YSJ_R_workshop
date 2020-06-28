@@ -1,0 +1,18 @@
+---
+title: "YSJ_R"
+output_dir: "docs"
+navbar: 
+  title: "YSJ R Workshop"
+  left: 
+  - text: "Before the workshop"
+    href: setup.html
+  - text: "Additional resources"
+    href: resources.html
+output:
+  html_document:
+    theme: readable
+    toc: yes
+    toc_float:
+      collapsed: yes
+      smooth_scroll: yes
+---

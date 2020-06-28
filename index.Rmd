@@ -1,0 +1,96 @@
+---
+title: "Workshop home"
+
+---
+
+# Overview
+
+This introductory R workshop has been put together for York St. John Psychology. The workshop will be hosted virtually, via Zoom, on the **7th-8th July** (9am-5pm).
+
+The course will provide an introduction to R, providing you with the basic skills for getting started in using it in your own research. The course is aimed at complete beginners in R -- **no programming experience or prior knowledge of R is required.** A basic understanding of inferential/frequentist statistics is assumed for the final part of the workshop, but attendees need not be experienced in using regression models. 
+
+The workshop will be led by [Emma James](https://www.york.ac.uk/psychology/staff/postdocs/elj504/#profile-content) and [Ronan McGarrigle](https://www.york.ac.uk/psychology/staff/postdocs/ram567/#profile-content), who both have hands-on experience in using R for psychological research. 
+
+# Before the workshop
+
+Before the workshop, please follow all the set-up steps on [this page](https://emljames.github.io/YSJ_R_workshop/setup). 
+
+
+# Schedule
+
+Two days of a new programming language is exhausting. Virtual meetings are exhausting. You will see that we have left plenty of time for breaks - this allows us flexibility if there are unexpected issues, time to deal with individual problems, and time to have a substantial break. Please do use the breaks to get some fresh air, take a walk if you can, do whatever will make you happy! 
+
+*Note this schedule is provided as a rough guide, but the precise timings are subject to change.*
+
+### Day 1
+
+**09:00--09:20:**   Introduction to the workshop  
+
+**09:20--10:00:**   [Interacting with R & RStudio](https://datacarpentry.org/r-socialsci/00-intro/index.html)
+
+**10:00--10:30:**   [Introduction to R (i)](https://datacarpentry.org/r-socialsci/01-intro-to-r/index.html)
+
+**BREAK**
+
+**11:00--12:00:**   [Introduction to R (ii)](https://datacarpentry.org/r-socialsci/01-intro-to-r/index.html)
+
+**LUNCH BREAK** 
+
+**13:30--15:00:**    [Starting with Data](https://datacarpentry.org/r-socialsci/02-starting-with-data/index.html)
+
+**BREAK**
+
+**15:30--17:00:**    [Introducing dplyr and tidyr](https://datacarpentry.org/r-socialsci/03-dplyr-tidyr/index.html)
+
+*Please complete the [end of the day survey](https://docs.google.com/forms/d/e/1FAIpQLSf7H-TgoT2KX3vRGnhIuF-lgFqc_--8uDqKVM3MI2RX7wLo1Q/viewform?usp=sf_link)!*
+
+### Day 2
+
+**09:00--09:30:**    Day 1 questions and recap
+
+**09:30--10:30:**    [Data visualisation with ggplot2 (i)](https://datacarpentry.org/r-socialsci/04-ggplot2/index.html)
+
+**BREAK**
+
+**11:00--12:00:**    [Data visualisation with ggplot2 (ii)](https://datacarpentry.org/r-socialsci/04-ggplot2/index.html)
+
+**LUNCH BREAK**
+
+**13:30--14:30:**    Getting started with regression models in R *(resources coming soon)*
+
+**14:30--15:00:**    Introduction to mixed effects models *(resources coming soon)*
+
+**BREAK**
+
+**15:30--17:00:**    Fitting mixed effects models using lme4 *(resources coming soon)*
+
+*Please complete the feedback form! - coming soon*
+
+
+# Interacting during the workshop
+
+### Zoom - cameras/mics
+
+The workshop will be hosted via Zoom. Please keep your microphone muted as a general practice - although you may of course unmute to ask for questions/clarification if you'd like. 
+
+We will be a small group, so it is your choice whether you want to keep your camera on and you can turn it on/off as you choose. It might be nice to see some friendly faces on occasion rather than talking to a blank screen, and it can be helpful for us to see nodding heads/confused faces. But being on camera all day can also be exhausting and there is no obligation to. Remember that turning your camera off can also help with the internet connection if you are struggling. 
+
+### Zoom  - features
+
+During exercises, we might ask for you to flag on Zoom when you are finished. To use this function, click on 'Participants' at the bottom of the screen. In the pop-up window, you can click "yes" or "no" to show us whether you are ready to move on. 
+
+There are also "go slower" and "go faster" buttons to help let us know if the pace of the workshop isn't working for you.
+
+
+### Slack - questions and resources
+
+We will be using a Slack workspace for questions and notes during the workshop (not the Zoom chat function). There are instructions on how to join the workspace on the Set-up page. 
+
+Please use the workspace to interact with us throughout the day - you might have specific questions, have an error code that you're not sure of (don't panic, this *will* happen!), you might need to tell us to slow down or that you need a quick break. The co-instructor will continuously monitor and respond to any issues throughout, and flag arising issues to the instructor leading if we need to stop.
+
+It's great if you can post your questions on the common channel, as there's a good chance other people might be having similar issues, but you can also message the support instructor directly if you prefer. We will also use the Slack workspace to share additional bits of code and links that might be useful, so please have it to hand during the day.
+
+
+### Code of conduct
+
+We are all learners at this workshop. Please respect that others might require a slower pace to you (you can always multi-task a little if you're ahead of the game!). We expect all instructors and attendees to be welcoming and inclusive, and respect each others' progress at all times. If you believe someone is violating this code of conduct, please let us know so that we can take the appropriate action to address the situation.
