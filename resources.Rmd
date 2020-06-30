@@ -4,14 +4,19 @@ title: "Recommended Resources"
 
 Here are some of our favourite resources for continuing to develop you R skills beyond the end of the workshop.
 
-*(Page still under development!)*
+*(Page still under development - more coming soon!!)*
 
 # Data processing in R  
 
-* [DataCamp](www.datacamp.com) - interactive courses for programming in R (free introductory levels, ££ for more advanced)
-* [R for Data Science](https://r4ds.had.co.nz/) - textbook written by the author of the *tidyverse* himself, freely available online 
-* [Gorilla to Tidy Data](https://emljames.github.io/GorillaR) - Emma's tutorial for processing output files from the online experiment platform Gorilla
+* [DataCamp](www.datacamp.com) - interactive courses for programming in R (free introductory levels, ££ for more advanced)  
+* [CodeAcademy](https://www.codecademy.com/learn/learn-r) - interactive exercises for introductory R  
+* [Software Carpentry](https://swcarpentry.github.io/r-novice-gapminder/) - similar-style materials to those we used in the course, but slightly more content, includes further information on writing your own functions and using R Markdown. 
+* [R for Data Science](https://r4ds.had.co.nz/) - textbook written by the author of the *tidyverse* himself, freely available online  
+* [Gorilla to Tidy Data](https://emljames.github.io/GorillaR) - Emma's tutorial for processing output files from the online experiment platform Gorilla  
 
 # Mixed effects models
 
-* Bodo Winter's tutorial - [Parts 1](http://www.bodowinter.com/uploads/1/2/9/3/129362560/bw_lme_tutorial1.pdf) & [2](http://www.bodowinter.com/uploads/1/2/9/3/129362560/bw_lme_tutorial2.pdf)
+* Bodo Winter's tutorial - [Parts 1](http://www.bodowinter.com/uploads/1/2/9/3/129362560/bw_lme_tutorial1.pdf) & [2](http://www.bodowinter.com/uploads/1/2/9/3/129362560/bw_lme_tutorial2.pdf)  
+* Violet Brown's *An approachable introduction to linear mixed effects modeling with implementation in R* - [pre-print](https://psyarxiv.com/9vghm/)  
+* Meteyard & Davies (2020) - *Best practice guidance for linear mixed-effects models in psychological science* - [paper](https://www.sciencedirect.com/science/article/pii/S0749596X20300061) published in the Journal of Memory and Language  
+

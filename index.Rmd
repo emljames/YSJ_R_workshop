@@ -1,6 +1,5 @@
 ---
 title: "Workshop home"
-
 ---
 
 # Overview
@@ -71,7 +70,7 @@ Two days of a new programming language is exhausting. Virtual meetings are exhau
 
 ### Zoom - cameras/mics
 
-The workshop will be hosted via Zoom. Please keep your microphone muted as a general practice - although you may of course unmute to ask for questions/clarification if you'd like. 
+The workshop will be hosted via Zoom. Please keep your microphone muted as a general practice (as this helps to reduce interference from background noise) - although you may of course unmute to ask for questions/clarification if you'd like. 
 
 We will be a small group, so it is your choice whether you want to keep your camera on and you can turn it on/off as you choose. It might be nice to see some friendly faces on occasion rather than talking to a blank screen, and it can be helpful for us to see nodding heads/confused faces. But being on camera all day can also be exhausting and there is no obligation to. Remember that turning your camera off can also help with the internet connection if you are struggling. 
 

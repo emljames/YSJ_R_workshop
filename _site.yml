@@ -4,6 +4,8 @@ output_dir: "docs"
 navbar: 
   title: "YSJ R Workshop"
   left: 
+  - text: "Home"
+    href: index.html
   - text: "Before the workshop"
     href: setup.html
   - text: "Additional resources"

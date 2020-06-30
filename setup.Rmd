@@ -1,6 +1,5 @@
 ---
 title: "Before the workshop"
-
 ---
 
 # 1. Setting up your physical work environment 
