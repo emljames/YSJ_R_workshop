@@ -37,3 +37,7 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+# Mixed effects resources in development
+regression-models.Rmd
+mixed-effects.Rmd
