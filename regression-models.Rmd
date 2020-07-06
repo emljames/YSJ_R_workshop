@@ -136,7 +136,7 @@ Linear regression models can be fitted using R's own statistical package, so we 
 
 Let's fit simple linear regression using the sleep study data. A good predictor of children's word learning score might be their vocabulary ability - we would expect that children who already know more words will be better at learning the new ones. Let's look at the dataframe we created from the first test session only (`pn_learn`) to test this.
 
-```{r}
+```{r class.source = 'fold-show'}
 pn_learn <- pn_long %>% 
   filter(session == 1) %>% 
   group_by(ID, vocab) %>% 
@@ -214,7 +214,7 @@ Using the raw vocabulary score as a predictor of performance made it easy to int
 Luckily, it's very easy to do this in R. Standardising involves two steps. First, it centres the variable: we substract the mean from each value, so that the mean is 0 and surrounding data points are positive or negative relative to the mean. Second, we divide the centered variable by the standard deviation, creating a z-score. 
 The `scale()` function handles both of these processes - let's use it to create our standardised vocabulary score `vocab_s`.
 
-```{r}
+```{r class.source = 'fold-show'}
 pn_learn$vocab_s <- scale(pn_learn$vocab, center = TRUE, scale = TRUE)
 ```
 

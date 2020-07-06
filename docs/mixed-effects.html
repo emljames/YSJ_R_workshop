@@ -436,18 +436,21 @@ div.tocify {
 </div>
 <div id="what-is-a-mixed-effects-model" class="section level1">
 <h1>What is a mixed effects model?</h1>
-<p>In our regression model, we only considered one source of variance - the random sample of participants that we tested from the population. In mixed effects models, we can consider more than one source. Often in psychology experiments, we might also want to consider the sample of stimuli that we incorporated (from all possible stimuli that we could have used). Just as we have some participants that show higher performance than others, we will likely have some items that</p>
+<p>In our regression model, we only considered one source of variance - the random sample of participants that we tested from the population. In mixed effects models, we can consider more than one source. Often in psychology experiments, we might also want to consider the sample of stimuli that we incorporated (from all possible stimuli that we could have used). Just as we have some participants that show higher performance than others, we will likely have some items that show higher performance than others.</p>
 <div id="fixed-effects" class="section level2">
 <h2>Fixed effects</h2>
+<p>Fixed effects are your key predictors of interest. They can be continuous or categorical.</p>
 </div>
 <div id="random-effects" class="section level2">
 <h2>Random effects</h2>
 <p>Random effects have to be categorical - they are modelling <em>clusters</em> of observations in the dataset, so we are dealing with sub-samples.</p>
 <div id="random-intercepts" class="section level3">
 <h3>Random intercepts</h3>
+<p>If we fit the model such that the intercept represents average performance (as is the case when we have centred our predictors), then random intercepts model the variance of each group’s average performance.</p>
 </div>
 <div id="random-slopes" class="section level3">
 <h3>Random slopes</h3>
+<p>Random slopes allow us to model the way in which our sub-groups might not only vary in their <em>average</em> performance, but also in their response to the fixed effects of interest.</p>
 </div>
 <div id="benefits-and-costs" class="section level3">
 <h3>Benefits (and costs)</h3>

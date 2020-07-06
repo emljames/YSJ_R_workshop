@@ -538,7 +538,7 @@ sd(pn_learn$mean_acc)</code></pre>
 <h3>Fitting the model</h3>
 <p>Linear regression models can be fitted using R’s own statistical package, so we don’t need to load any other kind of tools.</p>
 <p>Let’s fit simple linear regression using the sleep study data. A good predictor of children’s word learning score might be their vocabulary ability - we would expect that children who already know more words will be better at learning the new ones. Let’s look at the dataframe we created from the first test session only (<code>pn_learn</code>) to test this.</p>
-<pre class="r"><code>pn_learn &lt;- pn_long %&gt;% 
+<pre class="r fold-show"><code>pn_learn &lt;- pn_long %&gt;% 
   filter(session == 1) %&gt;% 
   group_by(ID, vocab) %&gt;% 
   summarise(mean_acc = mean(acc, na.rm = TRUE), mean_RT = mean(RT, na.rm = TRUE))</code></pre>
@@ -621,7 +621,7 @@ abline(h = 0, col = &quot;red&quot;)</code></pre>
 <h2>Continuous predictors</h2>
 <p>Using the raw vocabulary score as a predictor of performance made it easy to interpret the model in the same units (i.e., each point scored during the test). However, once we have multiple predictors in a model, it can be more informative to ensure that they are on the same scale. Standardising predictors can also help to reduce issues of multi-collinearity, especially once interaction terms are introduced into the model.</p>
 <p>Luckily, it’s very easy to do this in R. Standardising involves two steps. First, it centres the variable: we substract the mean from each value, so that the mean is 0 and surrounding data points are positive or negative relative to the mean. Second, we divide the centered variable by the standard deviation, creating a z-score. The <code>scale()</code> function handles both of these processes - let’s use it to create our standardised vocabulary score <code>vocab_s</code>.</p>
-<pre class="r"><code>pn_learn$vocab_s &lt;- scale(pn_learn$vocab, center = TRUE, scale = TRUE)</code></pre>
+<pre class="r fold-show"><code>pn_learn$vocab_s &lt;- scale(pn_learn$vocab, center = TRUE, scale = TRUE)</code></pre>
 <p>If we inspect the raw and transformed variables, we can now see that the standardised version is centred on 0.</p>
 <pre class="r"><code>hist(pn_learn$vocab)</code></pre>
 <p><img src="regression-models_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
