@@ -13,6 +13,7 @@ navbar:
 output:
   html_document:
     theme: readable
+    code_folding: show
     toc: yes
     toc_float:
       collapsed: yes

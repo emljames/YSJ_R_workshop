@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Emma James" />
+
+
+<title>Regression modelling in R</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/readable.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 66px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 71px;
+  margin-top: -71px;
+}
+.section h2 {
+  padding-top: 71px;
+  margin-top: -71px;
+}
+.section h3 {
+  padding-top: 71px;
+  margin-top: -71px;
+}
+.section h4 {
+  padding-top: 71px;
+  margin-top: -71px;
+}
+.section h5 {
+  padding-top: 71px;
+  margin-top: -71px;
+}
+.section h6 {
+  padding-top: 71px;
+  margin-top: -71px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">YSJ R Workshop</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="setup.html">Before the workshop</a>
+</li>
+<li>
+  <a href="resources.html">Additional resources</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Regression modelling in R</h1>
+<h4 class="author">Emma James</h4>
+
+</div>
+
+
+<div id="overview" class="section level1">
+<h1>Overview</h1>
+<div id="questions" class="section level3">
+<h3>Questions</h3>
+<ul>
+<li>What is linear regression?<br />
+</li>
+<li>How do I fit a linear regression model in R?<br />
+</li>
+<li>How do we handle different types of predictors in R?</li>
+</ul>
+</div>
+<div id="objectives" class="section level3">
+<h3>Objectives</h3>
+<ul>
+<li>Describe the features of a linear regression model<br />
+</li>
+<li>Fit a regression model using the <code>lm</code> function</li>
+<li>Centre and/or standardise continuous predictors<br />
+</li>
+<li>Describe different types of contrasts for factorial designs<br />
+</li>
+<li>Set contrasts for categorical predictors</li>
+</ul>
+<p><strong>Note that this is not designed to be a comprehensive statistical introduction, but a practical guide to fitting regression models in R.</strong></p>
+</div>
+</div>
+<div id="introduction-to-the-am-pm-dataset" class="section level1">
+<h1>Introduction to the AM-PM dataset</h1>
+<p>We will be working with data collected from a study of sleep and word learning in children (<a href="https://acamh.onlinelibrary.wiley.com/doi/full/10.1111/jcpp.13253">James, Gaskell, &amp; Henderson, 2020</a>. The experiment involved teaching children the names of unusual plants/animals, and testing their memory for them after periods of wake and sleep. For this lesson, we will analyse the data from the picture naming task, in which children were asked to name pictures of the items as quickly as they could. We will focus on data from the first two test sessions only (12-hour period containing wake or sleep).</p>
+<div id="read-in-the-data" class="section level3">
+<h3>Read in the data</h3>
+<p>As during the first part of the workshop, we will read in the data and format it using the tools from the <code>tidyverse</code>. Make sure you have the package loaded.</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<p>We can import the datafile directly from github by giving <code>read_csv()</code> the url to the raw content. Assign it to a dataframe called <code>pic_naming</code>:</p>
+<pre class="r"><code>pic_naming &lt;- read_csv(&quot;https://raw.githubusercontent.com/emljames/YSJ_R_workshop/master/data/AMPM_subset.csv&quot;)</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   ID = col_character(),
+##   sex = col_character(),
+##   vocab_score = col_double(),
+##   sleep_wake = col_character(),
+##   session = col_double(),
+##   item = col_character(),
+##   acc = col_double(),
+##   RT = col_double()
+## )</code></pre>
+<p>Let’s see what it looks like:</p>
+<pre class="r"><code>head(pic_naming)</code></pre>
+<pre><code>## # A tibble: 6 x 8
+##   ID       sex   vocab_score sleep_wake session item       acc    RT
+##   &lt;chr&gt;    &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;        &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt;
+## 1 AmPm0cde m              33 sleep            1 agouti       1 2167.
+## 2 AmPm0cde m              33 wake             1 banyan       1 1502.
+## 3 AmPm0cde m              33 wake             1 baobab       1  863.
+## 4 AmPm0cde m              33 sleep            1 blenny       0   NA 
+## 5 AmPm0cde m              33 wake             1 caracal      1  873.
+## 6 AmPm0cde m              33 wake             1 deglupta     0   NA</code></pre>
+</div>
+<div id="data-dictionary" class="section level3">
+<h3>Data dictionary</h3>
+<ul>
+<li><strong>ID</strong> — a unique anonymised code for each participant<br />
+</li>
+<li><strong>sex</strong> — whether the participant was male (m) or female (f)</li>
+<li><strong>vocab_score</strong> — raw score from a standardised measure of vocabulary (WASI-2 subtest)<br />
+</li>
+<li><strong>sleep_wake</strong> — whether the data are from the <em>sleep</em> condition (learning and test 1 in the evening; test 2 in the morning) or the <em>wake</em> condition (learning and test 1 in the morning; test 2 in the evening). This was a repeated measures manipulation—all participants completed both a sleep and a wake condition.<br />
+</li>
+<li><strong>session</strong> — whether the data are from test <em>1</em> (immediately after learning) or test <em>2</em> (12 hours later)<br />
+</li>
+<li><strong>item</strong> — the word trained and tested<br />
+</li>
+<li><strong>acc</strong> — whether the participant successfully recalled the word in the picture naming task<br />
+</li>
+<li><strong>RT</strong> — response time (ms), for accurate responses only</li>
+</ul>
+</div>
+<div id="compute-participant-averages-for-analysis" class="section level3">
+<h3>Compute participant averages for analysis</h3>
+<p>At the moment, this data is in long form: we have one row per trial per participant. Let’s work out how many pictures each participant (ID) could name for each condition (sleep_wake, session). We’ll also compute their mean response time.</p>
+<pre class="r"><code>pn_id &lt;- pic_naming %&gt;%                                               # create pn_id dataframe from pic_naming dataset
+  group_by(ID, sex, vocab_score, sleep_wake, session) %&gt;%             # produce output for each sleep_wake/session condition
+  summarise(total_acc = sum(acc), mean_RT = mean(RT, na.rm = TRUE))   # compute total correct and mean response time</code></pre>
+<p>The variables <code>sex</code> and <code>vocab_score</code> were redundant in the above grouping (as no participant will have more than one value listed), but listing them is a helpful way of retaining them in the summarised dataset. Also note that we have specified <code>na.rm = TRUE</code> when computing an average response time: this variable has lots of missing data as we are only interested in response times for those pictures that were named correctly.</p>
+</div>
+<div id="exercises" class="section level3">
+<h3>EXERCISES</h3>
+<ul>
+<li>Adapt the above code to create a new dataframe (<code>pn_learn</code>) that computes the averages (<code>total_acc</code>, <code>mean_RT</code>) for the first session only, regardless of learning time. You will want to use the <code>filter()</code> function. Make sure to keep in the ID, sex, and vocab data!<br />
+</li>
+<li>Use the <code>pn_id</code> dataframe to work out some descriptive statistics for each combination of conditions (sleep vs. wake, session 1 vs. 2).</li>
+<li>Use either your <code>pn_id</code> or <code>pn_learn</code> dataframe to work out some descriptive statistics for the first test session (<em>regardless</em> of sleep_wake condition). What was the mean number of pictures named? What was the standard deviation?</li>
+</ul>
+<pre class="r fold-hide"><code># Q1
+pn_learn &lt;- pic_naming %&gt;% 
+  filter(session == 1) %&gt;% 
+  group_by(ID, sex, vocab_score) %&gt;% 
+  summarise(total_acc = sum(acc)/2, mean_RT = mean(RT, na.rm = TRUE))
+
+# Q2
+pn_id %&gt;% 
+  group_by(sleep_wake, session) %&gt;% 
+  summarise(mean_acc = mean(total_acc, na.rm = TRUE), sd_acc = sd(total_acc, na.rm = TRUE), group_RT = mean(mean_RT, na.rm = TRUE), sd_RT = sd(mean_RT, na.rm = TRUE))
+
+# Q3 - using pn_id - note might need to ungroup!
+pn_id %&gt;% 
+  filter(session == 1) %&gt;% 
+  ungroup() %&gt;% 
+  summarise(total_acc = mean(total_acc, na.rm = TRUE), sd_acc = sd(total_acc, na.rm = TRUE))
+
+# Q3 - using pn_learn 
+mean(pn_learn$total_acc)</code></pre>
+</div>
+</div>
+<div id="what-is-linear-regression" class="section level1">
+<h1>What is linear regression?</h1>
+<p>Linear regression is used to model the relationship between one/more <em>predictor</em> variables and a continuous <em>outcome</em> measure (interval/ratio data). Note that although we talk about <em>predictors</em> and <em>outcomes</em>, the relationship is not necessarily causal.</p>
+<p>The model fits a single <em>regression line</em> that describes how the outcome measure changes in response to changes in the predictor variable(s). This line is described by two important components (<em>coefficients</em>):<br />
+* <strong>Intercept</strong> - where the line crosses 0 on the x-axis (this doesn’t have to be a value that exists in your data)<br />
+* <strong>Slope</strong> - how much does the outcome measure (y) change in response to a different in the predictor variable (x). This can be positive or negative: as x goes up, y could increase or decrease.</p>
+<div id="make-plot" class="section level23">
+<p>make plot</p>
+<p>The fitted line will not predict each data point exactly - there will always be some error in the model that we have not accounted for in any given analysis. The differences between our observed data points and the fitted line are called <em>residuals</em>.</p>
+</div>
+<div id="statistical-assumptions" class="section level3">
+<h3>Statistical assumptions</h3>
+<ul>
+<li>The observations should be independent.</li>
+<li>A linear regression model assumes that the relationship between the predictor/outcome variables are <em>linear</em>.<br />
+</li>
+<li>The residuals of the model (i.e., the error) should be normally distributed.</li>
+</ul>
+</div>
+</div>
+<div id="how-do-i-fit-a-linear-regression-model-in-r" class="section level1">
+<h1>How do I fit a linear regression model in R?</h1>
+<div id="fitting-the-model" class="section level3">
+<h3>Fitting the model</h3>
+<p>Linear regression models can be fitted using R’s own statistical package, so we don’t need to load any other kind of tools.</p>
+<p>Let’s fit simple linear regression using the sleep study data. A good predictor of children’s word learning score might be their vocabulary ability - we would expect that children who already know more words will be better at learning the new ones. Let’s look at the dataframe we created from the first test session only (<code>pn_learn</code>) to test this.</p>
+<pre class="r"><code>pn_learn &lt;- pic_naming %&gt;% 
+  filter(session == 1) %&gt;% 
+  group_by(ID, sex, vocab_score) %&gt;% 
+  summarise(total_acc = sum(acc)/2, mean_RT = mean(RT, na.rm = TRUE))</code></pre>
+<pre><code>## `summarise()` regrouping output by &#39;ID&#39;, &#39;sex&#39; (override with `.groups` argument)</code></pre>
+<p>When we run an analysis in R (particularly more complex models), we usually want to store the output as an object in the environment. Remember that we use the assignment operator (<code>&lt;-</code>) to do this. This seems strange and a bit of a faff, but it becomes useful for being able to work with our analyses later on. It will become habit before you know it!</p>
+<p>We use the function <code>lm()</code> to run a linear model. The first thing to enter is the model formula: it follows the structure of <em>y ~ x</em> (or outcome ~ predictor). The variables you list here need to match up to the variables (column names) in your dataset! Then we need to specify the data for it to use.</p>
+<pre class="r"><code>lm_learn_acc &lt;- lm(total_acc ~ vocab_score, data = pn_learn)</code></pre>
+</div>
+<div id="interpreting-the-results" class="section level3">
+<h3>Interpreting the results</h3>
+<p>After you have run the model, you’ll want to look at the output. We call <code>summary()</code> on the model object to get this:</p>
+<pre class="r"><code>summary(lm_learn_acc)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = total_acc ~ vocab_score, data = pn_learn)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -2.7421 -1.1017 -0.1017  0.8983  2.7308 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -2.73561    1.28811  -2.124   0.0418 *  
+## vocab_score  0.19458    0.04083   4.766  4.2e-05 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1.52 on 31 degrees of freedom
+##   (1 observation deleted due to missingness)
+## Multiple R-squared:  0.4229, Adjusted R-squared:  0.4043 
+## F-statistic: 22.72 on 1 and 31 DF,  p-value: 4.195e-05</code></pre>
+<p>This table summarises the model we fitted, the intercept, and the slope. The co-efficient for the vocabulary score is positive - the higher a child’s vocabulary ability, the more words they were likely to learn in the experiment. It automatically provides us with a <em>t</em>-statistic and <em>p</em>-value, so we can describe significant predictors of performance.</p>
+<p>The bottom section also provides some useful information about the model itself. We can see that one observation could not be included due to missing data. It also provides a measure of <em>R^2</em> - how much variance is described by the model. We can see that this model (containing only vocabulary ability) accounts for ~42% of variability in initial word learning. The <em>F</em>-statistic tells us that this is a much better model than simply using the mean word learning score.</p>
+</div>
+<div id="plotting-the-results" class="section level3">
+<h3>Plotting the results</h3>
+<p>We can use the <code>ggplot2</code> tools we learned earlier to plot the two variables against each other, and ask it for a regression line.</p>
+<pre class="r"><code>ggplot(pn_learn, aes(x = vocab_score, y = total_acc)) + 
+  geom_point() + 
+  geom_smooth(method = &quot;lm&quot;, se = FALSE, fullrange = TRUE) + 
+#  scale_x_continuous(limits = c(0, 45)) +
+#  scale_y_continuous(limits = c(-5.5, 15)) +
+  theme_minimal()</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<pre><code>## Warning: Removed 1 rows containing non-finite values (stat_smooth).</code></pre>
+<pre><code>## Warning: Removed 1 rows containing missing values (geom_point).</code></pre>
+<p><img src="regression-models_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+</div>
+<div id="checking-assumptions" class="section level3">
+<h3>Checking assumptions</h3>
+<p>As mentioned above, an important assumption of linear regression is that the residuals are normally distributed. The are lots of different ways to plot model fit and assumptions. For now, we’ll just keep things very simple:</p>
+<pre class="r"><code>plot(lm_learn_acc$residuals) +
+abline(h = 0, col = &quot;red&quot;)</code></pre>
+<p><img src="regression-models_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<pre><code>## integer(0)</code></pre>
+<p>You can do a lot with the statistics tools within R, and there are lots of tutorials online to demonstrate how to go about inspecting model fit. You might want to Google this, find some plots that are intuitive and easy for you to understand, and copy their procedure. I particularly like <a href="http://www.sthda.com/english/articles/39-regression-model-diagnostics/161-linear-regression-assumptions-and-diagnostics-in-r-essentials/">this tutorial</a>, as it produces some basic plots and explains clearly what to look for.</p>
+</div>
+<div id="exercises-1" class="section level3">
+<h3>EXERCISES</h3>
+<p>Fit a similar model, <code>lm_learn_RT</code> to examine the relationship between vocabulary ability and response time:</p>
+<ul>
+<li>Are children with better vocabulary quicker to name the pictures at the first test point?<br />
+</li>
+<li>How much of the variance in response time is accounted for by vocabulary ability?<br />
+</li>
+<li>What do you notice about the residuals for this model?</li>
+</ul>
+<pre class="r fold-hide"><code>lm_learn_RT &lt;- lm(mean_RT ~ vocab_score, data = pn_learn)
+summary(lm_learn_RT)
+
+plot(lm_learn_RT$residuals)+
+abline(h = 0, col = &quot;red&quot;)</code></pre>
+</div>
+</div>
+<div id="formatting-predictors" class="section level1">
+<h1>Formatting predictors</h1>
+<div id="continuous-predictors" class="section level2">
+<h2>Continuous predictors</h2>
+<p>Much as we might want the intercept to reflect the mean performance across our factorial predictors, we might want it also to reflect the mean of our continuous predictor. It’s quite common for researchers to <em>centre</em> their continuous predictors on 0 before entering them into the model.</p>
+<p>To centre a variable, you subtract the mean from each observation. This leaves any data points at the mean with the value of 0, and the surrounding data points will be positive or negative relative to the mean. Luckily, R has a function to do this that makes centering extremely easy. We use <code>scale()</code> to centre the vocabulary scores on 0, and we’ll save it as a new variable (<code>vocab_score_c</code>) for comparison.</p>
+<pre class="r"><code>pn_learn$vocab_score_c &lt;- scale(pn_learn$vocab_score, center = TRUE, scale = FALSE)</code></pre>
+<p>We should now see that the mean of this new variable is 0, but the spread of the data remains identical.</p>
+<pre class="r"><code>mean(pn_learn$vocab_score, na.rm = TRUE)</code></pre>
+<pre><code>## [1] 30.87879</code></pre>
+<pre class="r"><code>mean(pn_learn$vocab_score_c, na.rm = TRUE)</code></pre>
+<pre><code>## [1] -1.077598e-16</code></pre>
+<pre class="r"><code>sd(pn_learn$vocab_score, na.rm = TRUE)</code></pre>
+<pre><code>## [1] 6.580072</code></pre>
+<pre class="r"><code>sd(pn_learn$vocab_score_c, na.rm = TRUE)</code></pre>
+<pre><code>## [1] 6.580072</code></pre>
+<p>(You’ll see that our centred variable is actually very minutely off 0, but this is just a computing thing in terms of the precision used to compute the estimate. The difference is so tiny that it would not be problematic for our analyses).</p>
+<p>Another useful transformation is to <em>standardise</em> the predictors (also referred to as creating a z-score). In technical terms, this involves dividing our centred variable by the standard deviation. As you might have guessed, we can also do this within the <code>scale()</code> function - let’s create our standardised vocabulary score <code>vocab_score_s</code>.</p>
+<pre class="r"><code>pn_learn$vocab_score_s &lt;- scale(pn_learn$vocab_score, center = TRUE, scale = TRUE)</code></pre>
+<p>Let’s compare it with our centred only variable:</p>
+<pre class="r"><code>mean(pn_learn$vocab_score_c, na.rm = TRUE)</code></pre>
+<pre><code>## [1] -1.077598e-16</code></pre>
+<pre class="r"><code>mean(pn_learn$vocab_score_s, na.rm = TRUE)</code></pre>
+<pre><code>## [1] -1.679487e-17</code></pre>
+<pre class="r"><code>sd(pn_learn$vocab_score_c, na.rm = TRUE)</code></pre>
+<pre><code>## [1] 6.580072</code></pre>
+<pre class="r"><code>sd(pn_learn$vocab_score_s, na.rm = TRUE)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<p>The means of both transformed variables are 0, but we can now see that the standardised variable has a standard deviation of 1.</p>
+<p>Although standardising predictors means that you lose the relevant units (you can no longer say that an extra point in the vocabulary task leads to X improvement in word learning), it makes it easier to compare the relative influence of different predictors that might be on different scales. This is particularly important for interpreting interactions – which will be important for analysing experimental datasets when we move onto mixed effects models. It can also help with issues of multi-collinearity.</p>
+<p>Let’s compare the outputs of the linear models fitted with each of the three versions.</p>
+<pre class="r"><code># Original variable
+summary(lm_learn_acc)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = total_acc ~ vocab_score, data = pn_learn)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -2.7421 -1.1017 -0.1017  0.8983  2.7308 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -2.73561    1.28811  -2.124   0.0418 *  
+## vocab_score  0.19458    0.04083   4.766  4.2e-05 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1.52 on 31 degrees of freedom
+##   (1 observation deleted due to missingness)
+## Multiple R-squared:  0.4229, Adjusted R-squared:  0.4043 
+## F-statistic: 22.72 on 1 and 31 DF,  p-value: 4.195e-05</code></pre>
+<pre class="r"><code># Centred variable - different intercept, same slope
+lm_learn_acc_c &lt;- lm(total_acc ~ vocab_score_c, data = pn_learn)
+summary(lm_learn_acc_c)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = total_acc ~ vocab_score_c, data = pn_learn)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -2.7421 -1.1017 -0.1017  0.8983  2.7308 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)    3.27273    0.26454  12.372 1.58e-13 ***
+## vocab_score_c  0.19458    0.04083   4.766 4.20e-05 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1.52 on 31 degrees of freedom
+##   (1 observation deleted due to missingness)
+## Multiple R-squared:  0.4229, Adjusted R-squared:  0.4043 
+## F-statistic: 22.72 on 1 and 31 DF,  p-value: 4.195e-05</code></pre>
+<pre class="r"><code># Standardised variable - same intercept as centred, different slope (same significance) 
+lm_learn_acc_s &lt;- lm(total_acc ~ vocab_score_s, data = pn_learn)
+summary(lm_learn_acc_s)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = total_acc ~ vocab_score_s, data = pn_learn)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -2.7421 -1.1017 -0.1017  0.8983  2.7308 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)     3.2727     0.2645  12.372 1.58e-13 ***
+## vocab_score_s   1.2803     0.2686   4.766 4.20e-05 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1.52 on 31 degrees of freedom
+##   (1 observation deleted due to missingness)
+## Multiple R-squared:  0.4229, Adjusted R-squared:  0.4043 
+## F-statistic: 22.72 on 1 and 31 DF,  p-value: 4.195e-05</code></pre>
+</div>
+<div id="categorical-predictors" class="section level2">
+<h2>Categorical predictors</h2>
+<p>Psychologists often design their experiments to compare performance across two/more experimental conditions. For example, in our AM-PM dataset, we want to compare performance between the sleep and wake conditions (the <code>sleep_wake</code> variable). We want to test whether sleep vs. wake leads to greater change in performance between the two test sessions.</p>
+<p>To do this, we first need to compute change in performance between the two test sessions. We’ll focus on the accuracy data, and use the <code>pivot_wider()</code> and <code>mutate()</code> functions to work out each participant’s difference between conditions.</p>
+<pre class="r"><code>pn_id_acc &lt;- pic_naming %&gt;%                                     # create pn_id dataframe from pic_naming dataset
+  group_by(ID, sex, vocab_score, sleep_wake, session) %&gt;%       # produce output for each sleep_wake/session condition
+  summarise(total_acc = sum(acc)) %&gt;%                           # compute total correct
+  pivot_wider(names_from = session, names_prefix = &quot;test_&quot;, values_from = total_acc) %&gt;% 
+  mutate(change_acc = test_2 - test_1)</code></pre>
+<pre><code>## `summarise()` regrouping output by &#39;ID&#39;, &#39;sex&#39;, &#39;vocab_score&#39;, &#39;sleep_wake&#39; (override with `.groups` argument)</code></pre>
+<p><em>Realistically, this isn’t how we would analyse these data – we still have repeated measures for each condition here that’s not accounted for by the model. But this is where mixed effects will come in handy shortly!</em></p>
+<p>We want to use our categorical predictor (<code>sleep_wake</code>) predict change in performance across the 12-hour period. There are different ways of entering categorical predictors into your model, and how you decide to specify the comparisons (termed <em>contrasts</em>) will depend on your research question.</p>
+<p>By default, R will use “treatment coding” for categorical predictors. It will automatically assign one level of your factor as a “reference” level (dummy coded to 0) and the others as treatment levels (coded as 1). For example, someone in medical research might have a control group for reference (0) and want to look at the effect of a particular treatment (1).</p>
+<p>Let’s see what it’s done with our <code>pn_id_acc</code> data. First, we make sure it’s interpreting our categorical predictor as a factor. Then we can ask R what it’s already thinking about how it should be coded.</p>
+<pre class="r"><code>pn_id_acc$sleep_wake &lt;- as.factor(pn_id_acc$sleep_wake)
+
+contrasts(pn_id_acc$sleep_wake)</code></pre>
+<pre><code>##       wake
+## sleep    0
+## wake     1</code></pre>
+<p>For our <code>sleep_wake</code> condition, it’s treating the “sleep” condition as the baseline level, and “wake” as treatment. It’s automatically assigned this way because “sleep” appears first in the alphabet, which probably isn’t that helpful in the majority of situations. I want to consider “wake” as the baseline, so we can change this reference level using the <code>relevel()</code> function.</p>
+<pre class="r"><code>pn_id_acc$sleep_wake &lt;- relevel(pn_id_acc$sleep_wake, ref = &quot;wake&quot;)
+contrasts(pn_id_acc$sleep_wake)</code></pre>
+<pre><code>##       sleep
+## wake      0
+## sleep     1</code></pre>
+<p>Let’s have a look what these would look like in our model.</p>
+<pre class="r"><code>lm_acc_conds &lt;- lm(change_acc ~ sleep_wake, data = pn_id_acc)
+summary(lm_acc_conds)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = change_acc ~ sleep_wake, data = pn_id_acc)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -3.6061 -0.6176 -0.6061  0.3939  4.3824 
+## 
+## Coefficients:
+##                 Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)      -0.3939     0.2626  -1.500    0.138    
+## sleep_wakesleep   2.0116     0.3686   5.457  8.1e-07 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1.508 on 65 degrees of freedom
+##   (1 observation deleted due to missingness)
+## Multiple R-squared:  0.3142, Adjusted R-squared:  0.3036 
+## F-statistic: 29.78 on 1 and 65 DF,  p-value: 8.1e-07</code></pre>
+<p>However, as with the continuous variable, we might prefer that the intercept reflects the mean of these variables. This is particularly important once you have interactions between multiple factors in your model. Here, we use <em>sum coding</em> so that our contrasts reflects this. Rather than using 0s and 1s, we use -1 and +1 so that the intercept (when x = 0) reflects the grand mean.</p>
+<pre class="r"><code>contrasts(pn_id_acc$sleep_wake) &lt;- c(-1, 1)
+contrasts(pn_id_acc$sleep_wake)</code></pre>
+<pre><code>##       [,1]
+## wake    -1
+## sleep    1</code></pre>
+<p>R has some contrasts built in, and these can be really useful. For example, instead of manually specifying <code>c(-1, 1)</code> above, we could have used <code>contr.sum(2)</code>. Manual editing was a quick way for me to assign the levels in an order that was intuitive to me, but it really makes very little difference.</p>
+<pre class="r"><code>lm_acc_conds_sc &lt;- lm(change_acc ~ sleep_wake, data = pn_id_acc)
+summary(lm_acc_conds_sc)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = change_acc ~ sleep_wake, data = pn_id_acc)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -3.6061 -0.6176 -0.6061  0.3939  4.3824 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   0.6119     0.1843   3.320  0.00148 ** 
+## sleep_wake1   1.0058     0.1843   5.457  8.1e-07 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1.508 on 65 degrees of freedom
+##   (1 observation deleted due to missingness)
+## Multiple R-squared:  0.3142, Adjusted R-squared:  0.3036 
+## F-statistic: 29.78 on 1 and 65 DF,  p-value: 8.1e-07</code></pre>
+<p>The intercept has now change because it reflects <em>average</em> performance change rather than performance change for the wake condition. Similarly, the coefficient for sleep condition now reflects this new difference. However, the <em>t</em>-statistic and <em>p</em>-value reassuringly stays the same.</p>
+<p>We have kept things simple for today with only two levels of categorical variable. However, often we have three/more conditions that we want to compare and this requires some more thought. Unlike in running an ANOVA, you will have to specify which comparisons you want to make (e.g., a three level variable will use two contrasts). The best coding system for the job will depend on your specific hypotheses. There are some more resources on that here:</p>
+<p>** TO-DO - RESOURCES</p>
+<ul>
+<li><a href="https://stats.idre.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/">https://stats.idre.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/</a> - a very comprehensive summary!</li>
+</ul>
+</div>
+</div>
+<div id="interactions" class="section level1">
+<h1>Interactions</h1>
+<p>Now we’ve formatted the predictors correctly, we can incorporate multiple predictors into the same model.</p>
+<p>Adding the interaction term is very simple: we change the <code>+</code> in the formula to a <code>*</code>. Using the <code>*</code> incorporates both main effects separately, and the interaction between them. If we wanted the interaction term alone (not advisable), we could use <code>:</code> instead.</p>
+<p>We saw earlier that vocabulary ability predicted overall learning performance. Here, we can ask whether it predicts how well participants remember those new words (the change in performance between test 1 and test 2, <code>change_acc</code>), and whether this is different between wake and sleep.</p>
+<pre class="r"><code>pn_id_acc$vocab_score_c &lt;- scale(pn_id_acc$vocab_score)
+
+lm_acc_conds_vocab &lt;- lm(change_acc ~ sleep_wake * vocab_score_c, data = pn_id_acc)
+summary(lm_acc_conds_vocab)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = change_acc ~ sleep_wake * vocab_score_c, data = pn_id_acc)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -3.1803 -0.7574 -0.3289  0.6711  4.3956 
+## 
+## Coefficients:
+##                           Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                 0.6151     0.1881   3.270  0.00177 ** 
+## sleep_wake1                 1.0212     0.1881   5.429 1.04e-06 ***
+## vocab_score_c              -0.1651     0.1968  -0.839  0.40489    
+## sleep_wake1:vocab_score_c   0.2761     0.1968   1.402  0.16585    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1.514 on 61 degrees of freedom
+##   (3 observations deleted due to missingness)
+## Multiple R-squared:  0.3508, Adjusted R-squared:  0.3189 
+## F-statistic: 10.99 on 3 and 61 DF,  p-value: 7.283e-06</code></pre>
+<div id="exercise" class="section level3">
+<h3>EXERCISE</h3>
+<ul>
+<li>Fit a regression model (<code>lm_RT_conds_full</code>) to the response time data, using <code>sleep_wake</code> and <code>session</code> as predictors as well as the interaction between them. Do people speed up over sleep? What can you conclude from the results?</li>
+<li>Use the accuracy data to test for a three-way interaction between sleep-wake condition, test session, and vocabulary score. Remember to centre and scale the vocabulary measure first!</li>
+</ul>
+<pre class="r"><code>lm_RT_conds_full &lt;- lm(mean_RT ~ sleep_wake * session, data = pn_id)
+summary(lm_RT_conds_full)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = mean_RT ~ sleep_wake * session, data = pn_id)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -981.4 -429.4 -176.3  289.0 2305.0 
+## 
+## Coefficients:
+##                        Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)             1949.88     268.47   7.263 4.55e-11 ***
+## sleep_wakewake           -14.76     377.10  -0.039   0.9688    
+## session                 -316.26     168.12  -1.881   0.0624 .  
+## sleep_wakewake:session   221.53     236.73   0.936   0.3513    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 650.8 on 117 degrees of freedom
+##   (14 observations deleted due to missingness)
+## Multiple R-squared:  0.08785,    Adjusted R-squared:  0.06446 
+## F-statistic: 3.756 on 3 and 117 DF,  p-value: 0.01283</code></pre>
+<pre class="r"><code>pn_id$vocab_score_s &lt;- scale(pn_id$vocab_score)
+
+lm_acc_conds_vocab &lt;- lm(total_acc ~ sleep_wake * session * vocab_score_s, data = pn_id)
+summary(lm_acc_conds_vocab)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = total_acc ~ sleep_wake * session * vocab_score_s, 
+##     data = pn_id)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -4.7339 -1.1725 -0.1175  0.9783  5.3206 
+## 
+## Coefficients:
+##                                      Estimate Std. Error t value Pr(&gt;|t|)   
+## (Intercept)                            1.2909     0.7971   1.620  0.10789   
+## sleep_wakewake                         2.7773     1.1350   2.447  0.01582 * 
+## session                                1.6383     0.5041   3.250  0.00149 **
+## vocab_score_s                          1.0253     0.7867   1.303  0.19492   
+## sleep_wakewake:session                -2.0287     0.7160  -2.833  0.00538 **
+## sleep_wakewake:vocab_score_s           0.7762     1.1557   0.672  0.50308   
+## session:vocab_score_s                  0.1087     0.4976   0.218  0.82743   
+## sleep_wakewake:session:vocab_score_s  -0.5961     0.7208  -0.827  0.40989   
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 2.047 on 123 degrees of freedom
+##   (4 observations deleted due to missingness)
+## Multiple R-squared:  0.2965, Adjusted R-squared:  0.2565 
+## F-statistic: 7.405 on 7 and 123 DF,  p-value: 2.04e-07</code></pre>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

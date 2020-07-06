@@ -20,5 +20,6 @@ Here are some of our favourite resources for continuing to develop you R skills 
 * Bodo Winter's tutorial - [Parts 1](http://www.bodowinter.com/uploads/1/2/9/3/129362560/bw_lme_tutorial1.pdf) & [2](http://www.bodowinter.com/uploads/1/2/9/3/129362560/bw_lme_tutorial2.pdf)  
 * Violet Brown's *An approachable introduction to linear mixed effects modeling with implementation in R* - [pre-print](https://psyarxiv.com/9vghm/)  
 * Singmann & Kellen (2019) - *An introduction to mixed models for experimental psychology* - [pre-print of book chapter](http://singmann.org/download/publications/singmann_kellen-introduction-mixed-models.pdf)  
+* Baayen, Davidson & Bates (2008) - *Mixed-effects modeling with crossed random effects for subjects and items* - [paper](https://www.sciencedirect.com/science/article/pii/S0749596X07001398) published in the Journal of Memory and Language (Bates is one of the creators of the *lme4* package)
 * Meteyard & Davies (2020) - *Best practice guidance for linear mixed-effects models in psychological science* - [paper](https://www.sciencedirect.com/science/article/pii/S0749596X20300061) published in the Journal of Memory and Language  
 
