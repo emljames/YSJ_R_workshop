@@ -10,6 +10,8 @@ navbar:
     href: setup.html
   - text: "Linear models in R"
     href: regression-models.html
+  - text: "Mixed effects models"
+    href: mixed-effects.html
   - text: "Additional resources"
     href: resources.html
 output:

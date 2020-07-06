@@ -39,4 +39,3 @@ vignettes/*.pdf
 .Renviron
 
 # Mixed effects resources in development
-mixed-effects.Rmd

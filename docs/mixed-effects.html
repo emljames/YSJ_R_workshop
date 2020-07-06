@@ -362,6 +362,9 @@ div.tocify {
   <a href="regression-models.html">Linear models in R</a>
 </li>
 <li>
+  <a href="mixed-effects.html">Mixed effects models</a>
+</li>
+<li>
   <a href="resources.html">Additional resources</a>
 </li>
       </ul>
@@ -390,6 +393,7 @@ div.tocify {
 </div>
 
 
+<p><em>Work in progress!</em></p>
 <div id="overview" class="section level1">
 <h1>Overview</h1>
 <div id="questions" class="section level3">
@@ -410,9 +414,7 @@ div.tocify {
 <li>How do I interpret model output?<br />
 </li>
 <li>How can I compare models?</li>
-<li>What is non-convergence and do I deal with it?<br />
-</li>
-<li>How do I write up the results of a mixed effects model?</li>
+<li>What is non-convergence and do I deal with it?</li>
 </ul>
 </div>
 <div id="objectives" class="section level3">
@@ -436,17 +438,23 @@ div.tocify {
 </div>
 <div id="what-is-a-mixed-effects-model" class="section level1">
 <h1>What is a mixed effects model?</h1>
-<p>In our regression model, we only considered one source of variance - the random sample of participants that we tested from the population. In mixed effects models, we can consider more than one source. Often in psychology experiments, we might also want to consider the sample of stimuli that we incorporated (from all possible stimuli that we could have used). Just as we have some participants that show higher performance than others, we will likely have some items that show higher performance than others.</p>
+<p>In our regression model, we only considered one source of variance - the random sample of participants that we tested from the population. In mixed effects models, we can consider more than one source. They are sometimes referred to as hierachical models because we can nest sources of variance within each other.</p>
+<p>For example, researchers who collect data from children in school might want to model that individual children are clustered within classes, and those classes are in turn clustered within and between schools. We need <em>multi(ple)-levels</em> of variance to deal with this structure.</p>
+<p>Alternatively—in a psychology experiment—we might want to consider the sample of stimuli that we incorporated (from all possible stimuli that we could have used). Just as we have some participants that show higher performance than others, we will likely have some items that show higher performance than others. This variance is lost in a traditional analysis, as we have to average over all items to meet the assumption of independent observations (i.e., we can enter only one score per participant).</p>
+<p>Mixed effects models can be broken down into two parts: the fixed effects and the random effects.</p>
 <div id="fixed-effects" class="section level2">
 <h2>Fixed effects</h2>
-<p>Fixed effects are your key predictors of interest. They can be continuous or categorical.</p>
+<p>Fixed effects are your key predictors of interest. They are the same as you would use in a normal regression model, and can be continuous or categorical as we saw in the last part of the session.</p>
 </div>
 <div id="random-effects" class="section level2">
 <h2>Random effects</h2>
-<p>Random effects have to be categorical - they are modelling <em>clusters</em> of observations in the dataset, so we are dealing with sub-samples.</p>
+<p>Random effects have to be categorical - they are modelling <em>clusters</em> of observations in the dataset, so each observation belongs to a group or sub-sample of the data. So the clusters could be the classes that children are in, or the participant ID itself if we collected multiple trials from the same participant.</p>
+<p>Random effects can be further broken down into random <em>intercepts</em> and random <em>slopes</em>. There is an excellent visualisation of random intercepts and random slopes <a href="http://mfviz.com/hierarchical-models/">here</a> (Michael Freeman, University of Washington).</p>
 <div id="random-intercepts" class="section level3">
 <h3>Random intercepts</h3>
 <p>If we fit the model such that the intercept represents average performance (as is the case when we have centred our predictors), then random intercepts model the variance of each group’s average performance.</p>
+<p>We might expect that children within a class are more likely to have similar scores to each other, and more different scores to children from another class.</p>
+<p>Similarly, we might expect that an individual’s performance on a given trial might relate to their performance on the other trials.</p>
 </div>
 <div id="random-slopes" class="section level3">
 <h3>Random slopes</h3>
@@ -454,12 +462,23 @@ div.tocify {
 </div>
 <div id="benefits-and-costs" class="section level3">
 <h3>Benefits (and costs)</h3>
+<p>There are some great reasons to use mixed effects models, including:</p>
 <ul>
 <li>Can make use of all the data you collected without breaking assumption of independence<br />
 </li>
 <li>Better able to capture variation in the data (averaging always loses some)<br />
 </li>
+<li>Can easily incorporate a range of continuous and categorical predictors</li>
 <li>Allow us to make inferences beyond our specific sample of participants <em>and</em> specific sample of stimuli (cf. F1 and F2 analyses in language research)</li>
+</ul>
+<p>But there are some challenges, including:</p>
+<ul>
+<li>Needing to fit them in R! (although the syntax itself is very simple)</li>
+<li>Appropriately checking and dealing with statistical assumptions<br />
+</li>
+<li>Relatively complex - can encounter convergence issues<br />
+</li>
+<li>Current lack of standardisation in both conducting and reporting the analyses</li>
 </ul>
 </div>
 </div>
@@ -475,27 +494,29 @@ pn_long &lt;- read_csv(&quot;https://raw.githubusercontent.com/emljames/YSJ_R_wo
 </div>
 <div id="formatting-the-predictors" class="section level3">
 <h3>Formatting the predictors</h3>
-<p>As with the standard regression model, the first step is to make sure that our predictors are as we would want. You can repeat the steps from the last session to do this, just using the <code>pn_long</code> dataframe now rather than our participant averages.</p>
-<p><strong>Exercise:</strong></p>
-<ul>
+<p>As with the standard regression model, the first step is to make sure that our predictors are as we would want. You can repeat the steps from the <a href="https://emljames.github.io/YSJ_R_workshop/regression-models.html#Formatting_predictors">last session</a> to do this, just using the <code>pn_long</code> dataframe now rather than our participant averages.</p>
+<p><strong>Exercise</strong></p>
+<ol style="list-style-type: decimal">
 <li>Effect code the <code>sleep_wake</code> predictor, such that “wake” is -1 and “sleep” is +1. <em>Remember, you might need to re-format the variable as a factor!</em></li>
 <li>Effect code the <code>session</code> predictor, such that they are similarly coded to -1 and 1.</li>
 <li>Center and scale the <code>vocab</code> predictor, storing it as <code>vocab_s</code>.</li>
-</ul>
-<pre class="r"><code>pn_long$sleep_wake &lt;- as.factor(pn_long$sleep_wake)
-pn_long$session &lt;- as.factor(pn_long$session)
-
+</ol>
+<pre class="r"><code># Q1 - Sleep-wake predictor
+pn_long$sleep_wake &lt;- as.factor(pn_long$sleep_wake)
 contrasts(pn_long$sleep_wake) &lt;- c(-1, 1)
 contrasts(pn_long$sleep_wake)</code></pre>
 <pre><code>##       [,1]
 ## sleep   -1
 ## wake     1</code></pre>
-<pre class="r"><code>contrasts(pn_long$sleep_wake) &lt;- c(-1, 1)
+<pre class="r"><code># Q2 - Session predictor
+pn_long$session &lt;- as.factor(pn_long$session)
+contrasts(pn_long$sleep_wake) &lt;- c(-1, 1)
 contrasts(pn_long$sleep_wake) </code></pre>
 <pre><code>##       [,1]
 ## sleep   -1
 ## wake     1</code></pre>
-<pre class="r"><code>pn_long$vocab_s &lt;- scale(pn_long$vocab, center = TRUE, scale = TRUE)</code></pre>
+<pre class="r"><code># Q3 -  Vocabulary predictor
+pn_long$vocab_s &lt;- scale(pn_long$vocab, center = TRUE, scale = TRUE)</code></pre>
 </div>
 </div>
 <div id="fitting-a-linear-mixed-effects-model" class="section level1">
@@ -511,7 +532,7 @@ contrasts(pn_long$sleep_wake) </code></pre>
 library(lmerTest)  # Note, we might have to install this first! </code></pre>
 <div id="incorporating-random-intercepts" class="section level3">
 <h3>Incorporating random intercepts</h3>
-<p>Let’s start with the response time data this time. We use the <code>lmer()</code> function to fit a <em>l</em>inear <em>m</em>ixed <em>e</em>ffects <em>r</em>egression. The first argument should look familiar from the last chapter: we enter the formula to specify our outcome measure (<code>RT</code>) and predictors of interest (now “fixed effects”, <code>sleep_wake*session</code>). The last part should look familiar too - we need to tell it where to find the dataset.</p>
+<p>Let’s start with the response time data this time. We use the <code>lmer()</code> function to fit a <strong>l</strong>inear <strong>m</strong>ixed <strong>e</strong>ffects <strong>r</strong>egression. The first argument should look familiar from the last chapter: we enter the formula to specify our outcome measure (<code>RT</code>) and predictors of interest (now “fixed effects”, <code>sleep_wake*session</code>). The last part should look familiar too - we need to tell it where to find the dataset.</p>
 <pre class="r"><code>mem_rt_1 &lt;- lmer(RT ~ sleep_wake*session + (1|ID) + (1|item), data = pn_long)</code></pre>
 <p>…then you can see we have two extra bits to specify random intercepts. <code>(1|ID)</code> specifies that we will model varying intercepts per participant ID, and <code>(1|item)</code> specifies varying intercepts per word item. The <code>1</code> is R notation for the intercept - we could specify 1 in our fixed effects if we wanted, but there’s no need as it’s automatically assumed.</p>
 <p>Let’s call <code>summary()</code> on our fitted model to see the results:</p>
@@ -551,7 +572,8 @@ library(lmerTest)  # Note, we might have to install this first! </code></pre>
 </div>
 <div id="incorporating-random-slopes" class="section level3">
 <h3>Incorporating random slopes</h3>
-<p>Adding random intercepts has dealt with our violation of independence (the model now knows that there are clusters of observations in the data). But at the moment it’s only varying the intercepts for those clusters - different participants/items have different average responses, but we haven’t considered that they might differ in their response to the predictor variables. To add random slope to the model, we add it to our specification of the random effects in the formula. Let’s start by adding a single by-participant random slope for the effect of sleep_wake condition, incorporating variation in how different participants responded to the sleep-wake manipulation.</p>
+<p>Adding random intercepts has dealt with our violation of independence (the model now knows that there are clusters of observations in the data). But at the moment it’s only varying the intercepts for those clusters - different participants/items have different average responses, but we haven’t considered that they might differ in their response to the predictor variables.</p>
+<p>To add random slope to the model, we add it to our specification of the random effects in the formula. Let’s start by adding a single by-participant random slope for the effect of sleep_wake condition, incorporating variation in how different participants responded to the sleep-wake manipulation.</p>
 <pre class="r"><code>mem_rt_2 &lt;- lmer(RT ~ sleep_wake*session + (1+sleep_wake|ID) + (1|item), data = pn_long)
 
 summary(mem_rt_2)</code></pre>
@@ -587,7 +609,7 @@ summary(mem_rt_2)</code></pre>
 ## sleep_wake1  0.194              
 ## session2    -0.433  0.072       
 ## slp_wk1:ss2  0.062 -0.636 -0.015</code></pre>
-<p>Note that this actually adds <em>two</em> more parameters to the model - as it also models the correlation between the intercept and slope variability (more on this later).</p>
+<p>Note that this actually adds <em>two</em> more parameters to the model - as it also models the correlation between the intercept and slope variability.</p>
 <p>A nice way of viewing the variability we’ve modelled is to inspect the random effect estimates:</p>
 <pre class="r"><code># coef(mem_rt_2)$ID      # whole dataframe
 head(coef(mem_rt_2)$ID)  # print top of dataframe </code></pre>
@@ -599,31 +621,256 @@ head(coef(mem_rt_2)$ID)  # print top of dataframe </code></pre>
 ## AmPm10e8    1742.432    19.53950 -217.4899             150.4842
 ## AmPm181c    2318.392   369.36612 -217.4899             150.4842</code></pre>
 <p>… we can see that participants vary in their intercept (some are faster on average to name the pictures than others). We can also see that participants vary in how much they vary in speed between the sleep_wake conditions. The next two columns (session, the interaction) show identical values for all participants: this is because we’ve not incorporated this variation in the model.</p>
-<p><strong>EXERCISE:</strong></p>
-<ul>
-<li>What would you expect to see if you ran the code <code>coef(mem_rt_2$item)</code>? Try it to see if your predictions were correct.<br />
-</li>
-<li>Some researchers and statisticians advocate for <em>maximally specified random effects</em> - random slopes for each fixed effect (and interactions). Can you work out the correct syntax?<br />
-</li>
-<li>…what happens when you try to run it?</li>
-</ul>
-<pre class="r"><code>mem_rt_max &lt;- lmer(RT ~ sleep_wake*session + (1+sleep_wake*session|ID) + (1+sleep_wake*session|item), data = pn_long)</code></pre>
+<p>Some people use these random coefficients to analyse individual differences. You can also call <code>ranef()</code> if you want to look at how each individual varies relative to the main intercept.</p>
 </div>
 <div id="checking-assumptions" class="section level3">
 <h3>Checking assumptions</h3>
-<p>Again, there are various ways of checking assumptions of mixed effects models. A linear mixed effects model has many similar assumptions to a standard linear regression, including normlaity of residuals. Plotting the model will enable us to inspect this.</p>
+<p>Again, there are various ways of checking assumptions of mixed effects models. A linear mixed effects model has many similar assumptions to a standard linear regression, including normality of residuals. Plotting the model will enable us to inspect this.</p>
 <pre class="r"><code>plot(mem_rt_2)</code></pre>
-<p><img src="mixed-effects_files/figure-html/unnamed-chunk-9-1.png" width="672" /> Perhaps unsurprisingly, the response time data is skewed, leaving a poor fit of the model for the positive tail. We can deal with these issues in the same ways as we deal with skewed data in traditional analyses, and there may be preferred protocols in different fields. This might involving removing outliers above certain condition thresholds, and/or performing some kind of data transformation (e.g., inverse, log, Box-Cox)</p>
-<p>You can do this transformation within your dataframe- compute a new variable, and then use this transformed version in your model. For simple transformations, you can even do this directly in the model formula. For example, rather than listing <code>RT</code> as the dependent variable, we can specify that we want to use the inverse transformation by listing <code>1/RT</code>.</p>
-<pre class="r"><code>mem_rt_inv &lt;- lmer(1/RT ~ sleep_wake*session + (1+sleep_wake|ID) + (1|item), data = pn_long)
+<p><img src="mixed-effects_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>Perhaps unsurprisingly, the response time data is skewed, leaving a poor fit of the model for the positive tail. We can deal with these issues in the same ways as we deal with skewed data in traditional analyses, and there may be preferred protocols in different fields. This might involving removing outliers above certain condition thresholds, and/or performing some kind of data transformation (e.g., inverse, log, Box-Cox).</p>
+<p>You can do this transformation within your dataframe - compute a new variable, and then use this transformed version in your model. Let’s try one solution now:</p>
+<pre class="r"><code># Compute inverse RT variable
+pn_long$RT_inv &lt;- 1/pn_long$RT
 
+# Re-run mode using inverse response time variable
+mem_rt_inv &lt;- lmer(RT_inv ~ sleep_wake*session + (1+sleep_wake|ID) + (1|item), data = pn_long)
+
+# Inspect the residuals
 plot(mem_rt_inv)</code></pre>
-<p><img src="mixed-effects_files/figure-html/unnamed-chunk-10-1.png" width="672" /> You can see that transforming the data has improved the distribution of the residuals.</p>
-<p>= # Fitting a binomial mixed effects logistic regression model</p>
+<p><img src="mixed-effects_files/figure-html/unnamed-chunk-9-1.png" width="672" /> You can see that transforming the data has improved the distribution of the residuals.</p>
+<p>For simple transformations, you can even do this directly in the model formula. For example, rather than listing <code>RT</code> as the dependent variable, we can specify that we want to use the inverse transformation by listing <code>1/RT</code>. However, this is slightly more error-prone as you have no way of checking it’s performed the transformation as you expect.</p>
+</div>
+<div id="exercises" class="section level3">
+<h3>EXERCISES</h3>
+<ol style="list-style-type: decimal">
+<li>Call <code>summary()</code> on the new model <code>mem_rt_inv</code>. What do you notice about the estimates?<br />
+</li>
+<li>Add a random slope for the sleep_wake effect for item (as well as for ID). Call the new model <code>mem_rt_inv2</code>. Do the results change?</li>
+<li>Now try adding random slopes for the effect of <code>session</code> as well. What happens?</li>
+</ol>
+<p><em>Hint: some people find scientific notation really difficult to read. You can run <code>options(scipen=999)</code> in the console to turn it off!</em></p>
+<pre class="r"><code># Question 1 
+summary(mem_rt_inv1)
+
+# Question 2
+mem_rt_inv2 &lt;- lmer(RT_inv ~ sleep_wake*session + (1+sleep_wake|ID) + (1+sleep_wake|item), data = pn_long)
+summary(mem_rt_inv2)
+
+# Question 3
+mem_rt_inv3 &lt;- lmer(RT_inv ~ sleep_wake*session + (1+sleep_wake+session|ID) + (1+sleep_wake+session|item), data = pn_long)</code></pre>
+</div>
+</div>
+<div id="fitting-a-binomial-mixed-effects-logistic-regression-model" class="section level1">
+<h1>Fitting a binomial mixed effects logistic regression model</h1>
+<p>So what about our accuracy data? Let’s try fitting our model there and check the residuals:</p>
+<pre class="r"><code>mem_acc_1 &lt;- lmer(acc ~ sleep_wake*session + (1|ID) + (1|item), data = pn_long)
+
+plot(mem_acc_1)</code></pre>
+<p><img src="mixed-effects_files/figure-html/unnamed-chunk-11-1.png" width="672" /> This doesn’t look right! This is because when we work with our accuracy data on a trial-level, the data are no longer continuous. We have a single binomial response for each trial, reflecting whether the participant correctly named the picture (1) or not (0).</p>
+<p>This type of data requires a <em>binomial</em> logistic regression model. Fortunately, <code>lme4</code> let’s us do that too.</p>
+<div id="incorporating-random-intercepts-1" class="section level3">
+<h3>Incorporating random intercepts</h3>
+<p>As with the RT data, we can fit a model with random intercepts for participant ID and for item. Now, we specify <code>glmer()</code> for <strong>g</strong>eneralised <strong>l</strong>inear <strong>m</strong>ixed <strong>e</strong>ffects <strong>r</strong>egression. We also need to tell is the kind of data distribution we’re working with, in this case “binomial”. This is the only type we’ll be working with today, but there are many other options if your data require it!</p>
+<pre class="r"><code>mem_acc_1 &lt;- glmer(acc ~ sleep_wake*session + (1|ID) + (1|item), family = &quot;binomial&quot;, data = pn_long)</code></pre>
+<p>Just like before, we call <code>summary()</code> to view the output.</p>
+<pre class="r"><code>summary(mem_acc_1)</code></pre>
+<pre><code>## Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) [&#39;glmerMod&#39;]
+##  Family: binomial  ( logit )
+## Formula: acc ~ sleep_wake * session + (1 | ID) + (1 | item)
+##    Data: pn_long
+## 
+##      AIC      BIC   logLik deviance df.resid 
+##   1656.5   1688.8   -822.3   1644.5     1596 
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -3.9443 -0.5611 -0.3314  0.6004  5.7858 
+## 
+## Random effects:
+##  Groups Name        Variance Std.Dev.
+##  ID     (Intercept) 1.029    1.014   
+##  item   (Intercept) 1.096    1.047   
+## Number of obs: 1602, groups:  ID, 34; item, 24
+## 
+## Fixed effects:
+##                      Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)          -1.24806    0.29255  -4.266 1.99e-05 ***
+## sleep_wake1           0.26940    0.09179   2.935  0.00334 ** 
+## session2              0.33672    0.12664   2.659  0.00784 ** 
+## sleep_wake1:session2 -0.54815    0.12706  -4.314 1.60e-05 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Correlation of Fixed Effects:
+##             (Intr) slp_w1 sessn2
+## sleep_wake1 -0.028              
+## session2    -0.234  0.052       
+## slp_wk1:ss2  0.026 -0.724 -0.018</code></pre>
+</div>
+<div id="incorporating-random-slopes-1" class="section level3">
+<h3>Incorporating random slopes</h3>
+<p>We incorporate random slopes in exactly the same way. Let’s fit a random slopes for the effect of sleep_wake condition for each participan, and for each item..</p>
+<pre class="r"><code>mem_acc_2 &lt;- glmer(acc ~ sleep_wake*session + (1+sleep_wake|ID) + (1+sleep_wake|item), family = &quot;binomial&quot;, data = pn_long)
+
+summary(mem_acc_2)</code></pre>
+<pre><code>## Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) [&#39;glmerMod&#39;]
+##  Family: binomial  ( logit )
+## Formula: acc ~ sleep_wake * session + (1 + sleep_wake | ID) + (1 + sleep_wake |      item)
+##    Data: pn_long
+## 
+##      AIC      BIC   logLik deviance df.resid 
+##   1629.2   1683.0   -804.6   1609.2     1592 
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -4.1424 -0.5456 -0.3016  0.5192  4.7588 
+## 
+## Random effects:
+##  Groups Name        Variance Std.Dev. Corr
+##  ID     (Intercept) 1.20073  1.0958       
+##         sleep_wake1 0.33207  0.5763   0.50
+##  item   (Intercept) 1.29181  1.1366       
+##         sleep_wake1 0.09384  0.3063   0.59
+## Number of obs: 1602, groups:  ID, 34; item, 24
+## 
+## Fixed effects:
+##                      Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)           -1.3113     0.3158  -4.153 3.28e-05 ***
+## sleep_wake1            0.1659     0.1555   1.066   0.2863    
+## session2               0.3036     0.1311   2.316   0.0206 *  
+## sleep_wake1:session2  -0.5538     0.1311  -4.224 2.40e-05 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Correlation of Fixed Effects:
+##             (Intr) slp_w1 sessn2
+## sleep_wake1  0.371              
+## session2    -0.221  0.012       
+## slp_wk1:ss2  0.006 -0.449  0.068</code></pre>
+</div>
+<div id="checking-assumptions-1" class="section level3">
+<h3>Checking assumptions</h3>
+<p>Statistical assumptions for binomial models are perhaps less intuitive and less-familiar. Delving too deeply into these issues is beyond the scope of this course, but I highly recommend looking into the <em>DHARMa</em> package (Hartig, 2020). The <a href="https://cran.r-project.org/web/packages/DHARMa/vignettes/DHARMa.html">vignette</a> provides a very thorough tutorial of how to use and interpret the tools.</p>
+<p>This package is best run on simulated residuals from the model, but let’s look at the residuals for demonstration purposes.</p>
+<pre class="r"><code>#install.packages(&quot;DHARMa&quot;)
+library(DHARMa)</code></pre>
+<pre><code>## This is DHARMa 0.3.2.0. For overview type &#39;?DHARMa&#39;. For recent changes, type news(package = &#39;DHARMa&#39;) Note: Syntax of plotResiduals has changed in 0.3.0, see ?plotResiduals for details</code></pre>
+<pre class="r"><code>plotQQunif(mem_acc_2)</code></pre>
+<p><img src="mixed-effects_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 </div>
 </div>
 <div id="comparing-complex-models" class="section level1">
 <h1>Comparing complex models</h1>
+<p>Running into convergence issues brings us to an important question: which fixed and random effects should I incorporate?</p>
+<div id="fixed-effects-1" class="section level3">
+<h3>Fixed effects</h3>
+<p>There are two major schools of thought on which fixed effects should be incorporated in the model.</p>
+<p>Some people take the view that we fit all predictors of <em>theoretical</em> interest. Particularly when we are modelling experimental data, we have usually designed our experiment to test hypotheses about different experimental conditions. We want to present all predictors in our results section, whether or not they were good predictors of performance.</p>
+<p>However, other people favour model <em>parsimony</em>: we want a model that provides the best fit to the data with the smallest number of variables. Using fewer variables is likely to be practically easier in the real world, and more generalisable to different datasets. This approach can be described as <em>data-driven</em>.</p>
+<p>So how would we test whether a fixed effect of interest contributes to model fit? We fit the model with and without the fixed effect of interest, and then compare the two.</p>
+<p>Let’s try adding vocabulary to our accuracy model (with random intercepts only).</p>
+<pre class="r"><code># Remove participant with missing vocabulary data, so that the two models are fit in the same dataset. 
+pn_long_v &lt;- filter(pn_long, !is.na(vocab)) # filter data
+
+# Re-run the model without vocabulary as a predictor
+mem_acc_v0 &lt;- glmer(acc ~ sleep_wake*session + (1|ID) + (1|item), family = &quot;binomial&quot;, data = pn_long_v)
+
+# Model with vocabulary
+mem_acc_v1 &lt;- glmer(acc ~ vocab_s + sleep_wake*session + (1|ID) + (1|item), family = &quot;binomial&quot;, data = pn_long_v)</code></pre>
+<p>To compare the two models, we use a <em>likelihood ratio test</em>: this compares the likelihood of one model to the likelihood of another (i.e., how plausible the parameter values are, given the data). The two models are nested, as the <code>mem_acc_1</code> model is a subset of all predictors used in the <code>mem_acc_v</code> model (differing only in its inclusion of vocabulary). We use the <code>anova()</code> function to test for a difference between the two models:</p>
+<pre class="r"><code>anova(mem_acc_v0, mem_acc_v1)</code></pre>
+<pre><code>## Data: pn_long_v
+## Models:
+## mem_acc_v0: acc ~ sleep_wake * session + (1 | ID) + (1 | item)
+## mem_acc_v1: acc ~ vocab_s + sleep_wake * session + (1 | ID) + (1 | item)
+##            npar    AIC    BIC  logLik deviance  Chisq Df Pr(&gt;Chisq)    
+## mem_acc_v0    6 1590.4 1622.5 -789.22   1578.4                         
+## mem_acc_v1    7 1575.2 1612.6 -780.59   1561.2 17.258  1  3.264e-05 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>We can see that including vocabulary significantly improves the fit of the model. This is one of the best ways of computing statistical significant for each fixed effect (see also the <a href="https://cran.r-project.org/web/packages/afex/afex.pdf"><em>afex</em></a> package if you want to automate it!), but can also be used to decide whether any fixed effect should be kept in the model.</p>
+</div>
+<div id="exercises-1" class="section level3">
+<h3>EXERCISES</h3>
+<ol style="list-style-type: decimal">
+<li>In <code>mem_acc_v1</code>, we incorporated vocabulary as a fixed effect alongside the sleep_wake*session interaction. Keeping only random intercepts, try fitting a more complex model that includes vocabulary in a three-way interaction. Is it worth keeping in the model?</li>
+<li>How about either of the two-way interaction terms? (hint, you can specify each one using <code>*</code> or <code>:</code>)</li>
+</ol>
+<pre class="r"><code># Question 1
+mem_acc_v2 &lt;- glmer(acc ~ vocab_s*sleep_wake*session + (1|ID) + (1|item), family = &quot;binomial&quot;, data = pn_long_v)
+anova(mem_acc_v1, mem_acc_v2)
+
+# Question 2
+mem_acc_v3 &lt;- glmer(acc ~ vocab_s*sleep_wake + sleep_wake*session + (1|ID) + (1|item), family = &quot;binomial&quot;, data = pn_long_v)
+anova(mem_acc_v1, mem_acc_v3)
+
+mem_acc_v4 &lt;- glmer(acc ~ vocab_s*session + sleep_wake*session + (1|ID) + (1|item), family = &quot;binomial&quot;, data = pn_long_v)
+anova(mem_acc_v1, mem_acc_v4)</code></pre>
+</div>
+<div id="random-effects-1" class="section level3">
+<h3>Random effects</h3>
+<p>As with fixed effects, there are different approaches here too. At the very least you’d want to account for non-independence in the data (i.e., the clustering of observations for each participant, each item), but what about random slopes?</p>
+<p>Those advocating for <a href="https://www.sciencedirect.com/science/article/pii/S0749596X12001180?casa_token=0OmyQpqPz8kAAAAA:NB1dOt5U3uBDdeOdqOhVRm7IDf3j2vzJnjc0aoy6-hkMgpF9q1oo8WgF8Sf1938vPu6DLFR_SW4T"><em>maximally specified random effects</em></a> (Barr et al., 2013) would say that you should incorporate a random slope for every fixed effect (where relevant). However, even if this is the best statistical guidance, researchers often find that the model does not converge. <em>Non-convergence</em> basically means that the model hasn’t been able to settle on parameters, and often arises from us trying to fit more complex models than our data really support.</p>
+<p>We can see that with our dataset here: let’s try adding all slopes to our original accuracy model.</p>
+<pre class="r"><code>mem_acc_max &lt;- glmer(acc ~ sleep_wake*session + (1+sleep_wake*session|ID) + (1+sleep_wake*session|item), family = &quot;binomial&quot;, data = pn_long)</code></pre>
+<pre><code>## Warning in checkConv(attr(opt, &quot;derivs&quot;), opt$par, ctrl = control$checkConv, : Model failed to converge with max|grad| = 0.0801898 (tol = 0.002,
+## component 1)</code></pre>
+<p>But model parsimony applies to random effects too (thankfully), so a data-driven approach can also be taken to determine whether random effects are improving the fit of the model.</p>
+<p>Just as with fixed effects, we compute multiple nested models that vary in the random slope of interest, and use a likelihood ratio test to compare the two. For example, we already computed some nested models earlier that varied in their random slopes.</p>
+<pre class="r"><code>anova(mem_acc_1, mem_acc_2)</code></pre>
+<pre><code>## Data: pn_long
+## Models:
+## mem_acc_1: acc ~ sleep_wake * session + (1 | ID) + (1 | item)
+## mem_acc_2: acc ~ sleep_wake * session + (1 + sleep_wake | ID) + (1 + sleep_wake | 
+## mem_acc_2:     item)
+##           npar    AIC    BIC  logLik deviance  Chisq Df Pr(&gt;Chisq)    
+## mem_acc_1    6 1656.5 1688.8 -822.27   1644.5                         
+## mem_acc_2   10 1629.2 1683.0 -804.60   1609.2 35.337  4  3.961e-07 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>There are numerous papers debating how researchers should approach specifying their random effects, and unfortunately there is no one correct answer. The best approach will be to read around the issues, and look at how things are done in your particular field. You might find there’s some variability in approaches (see <a href="https://www.sciencedirect.com/science/article/pii/S0749596X20300061">Meteyard &amp; Davies (2020)</a>), but it’s good way to start out.</p>
+</div>
+<div id="exercise" class="section level3">
+<h3>EXERCISE</h3>
+<ol style="list-style-type: decimal">
+<li>Which random effects can you incorporate into the mem_acc models without running into convergence issues? (with fixed effects of <code>sleep_wake*session</code>)</li>
+<li>If we include vocabulary as a fixed effect, how should we incorporate it as a random slope in the model? <em>(hint: can the slope for vocabulary vary between participants? what about between items?)</em></li>
+</ol>
+<pre class="r"><code># Question 1 - only sleep_wake slopes can be incorporated 
+mem_acc_3 &lt;- glmer(acc ~ sleep_wake*session + (1+sleep_wake+session|ID) + (1+sleep_wake|item), family = &quot;binomial&quot;, data = pn_long) # nope</code></pre>
+<pre><code>## Warning in checkConv(attr(opt, &quot;derivs&quot;), opt$par, ctrl = control$checkConv, : Model failed to converge with max|grad| = 0.00717289 (tol = 0.002,
+## component 1)</code></pre>
+<pre class="r"><code>mem_acc_3 &lt;- glmer(acc ~ sleep_wake*session + (1+sleep_wake|ID) + (1+sleep_wake+session|item), family = &quot;binomial&quot;, data = pn_long) #nope </code></pre>
+<pre><code>## Warning in checkConv(attr(opt, &quot;derivs&quot;), opt$par, ctrl = control$checkConv, : Model failed to converge with max|grad| = 0.0187507 (tol = 0.002,
+## component 1)</code></pre>
+</div>
+<div id="other-ways-of-dealing-with-complex-models" class="section level3">
+<h3>Other ways of dealing with complex models</h3>
+<p>There are other options to try if your model is not converging, and you might want to try these if your aim is to fit as maximally specified model as possible. Some options include changing the optimiser (type <code>help(convergence)</code> to see some suggestions) or increasing the number of iterations. You can also force the correlation parameters between your random slopes to 0, leaving fewer parameters fitted overall. The internet is full of suggestions and more information about how to implement them — Google is your friend.</p>
+<p>What’s most important for you to know now is that you <em>will</em> encounter these issues, but that they are a common problem that can be overcome!</p>
+</div>
+</div>
+<div id="key-points" class="section level1">
+<h1>Key points</h1>
+<ul>
+<li>Mixed effects models allow us to consider multiple sources of variance in the data, in a hierarchical manner.</li>
+<li>Package <code>lme4</code> is the main workhorse for mixed effects models. We can also load <code>lmerTest</code> (or <code>afex</code>) for additional tools.<br />
+</li>
+<li>Fit linear mixed effects models using <code>lmer()</code>.<br />
+</li>
+<li>Fit <em>generalised</em> linear mixed effects models using <code>glmer()</code>, and also specify the type of distribution under the family argument (e.g., “binomial”).<br />
+</li>
+<li>Use <code>(1|grouping</code>) to fit random intercepts for each level of a given group (e.g., participants, items).<br />
+</li>
+<li>Use <code>(1+effect|grouping</code>) to add a random slope associated with a fixed effect for each level of a given group.<br />
+</li>
+<li>Use <code>coef(model)$grouping</code> to inspect the variability associated with your grouping effect. <code>ranef(model)$grouping</code> can alternatively be used to view the deviations of each individual from the intercept.<br />
+</li>
+<li>Compare two models with nested fixed and/or random effects using <code>anova()</code> to run a likelihood ratio test.<br />
+</li>
+<li>Check the statistical assumptions by calling <code>plot()</code> on the model object, or using tools such as those from the <code>DHARMa</code> package.</li>
+</ul>
 </div>
 
 
