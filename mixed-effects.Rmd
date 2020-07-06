@@ -71,6 +71,7 @@ There are some great reasons to use mixed effects models, including:
 * Better able to capture variation in the data (averaging always loses some)  
 * Can easily incorporate a range of continuous and categorical predictors
 * Allow us to make inferences beyond our specific sample of participants *and* specific sample of stimuli (cf. F1 and F2 analyses in language research)  
+* Can handle missing data pretty well 
 
 But there are some challenges, including:
 
@@ -101,7 +102,7 @@ As with the standard regression model, the first step is to make sure that our p
 2. Effect code the `session` predictor, such that they are similarly coded to -1 and 1. 
 3. Center and scale the `vocab` predictor, storing it as `vocab_s`.
 
-```{r}
+```{r  eval = TRUE, class.source = 'fold-hide'}
 # Q1 - Sleep-wake predictor
 pn_long$sleep_wake <- as.factor(pn_long$sleep_wake)
 contrasts(pn_long$sleep_wake) <- c(-1, 1)
@@ -131,6 +132,7 @@ One of the most frequently used packages for mixed effects modelling is `lme4`. 
 library(lme4)
 library(lmerTest)  # Note, we might have to install this first! 
 ```
+
 
 ### Incorporating random intercepts 
 
@@ -206,7 +208,7 @@ For simple transformations, you can even do this directly in the model formula. 
 
 *Hint: some people find scientific notation really difficult to read. You can run `options(scipen=999)` in the console to turn it off!*
 
-```{r eval = FALSE}
+```{r  eval = FALSE, class.source = 'fold-hide'}
 # Question 1 
 summary(mem_rt_inv1)
 
@@ -216,7 +218,6 @@ summary(mem_rt_inv2)
 
 # Question 3
 mem_rt_inv3 <- lmer(RT_inv ~ sleep_wake*session + (1+sleep_wake+session|ID) + (1+sleep_wake+session|item), data = pn_long)
-
 ```
 
 # Fitting a binomial mixed effects logistic regression model 
@@ -308,7 +309,7 @@ We can see that including vocabulary significantly improves the fit of the model
 1. In `mem_acc_v1`, we incorporated vocabulary as a fixed effect alongside the sleep_wake*session interaction. Keeping only random intercepts, try fitting a more complex model that includes vocabulary in a three-way interaction. Is it worth keeping in the model? 
 2. How about either of the two-way interaction terms? (hint, you can specify each one using `*` or `:`)
 
-```{r eval = FALSE}
+```{r  eval = FALSE, class.source = 'fold-hide'}
 # Question 1
 mem_acc_v2 <- glmer(acc ~ vocab_s*sleep_wake*session + (1|ID) + (1|item), family = "binomial", data = pn_long_v)
 anova(mem_acc_v1, mem_acc_v2)
@@ -347,11 +348,14 @@ There are numerous papers debating how researchers should approach specifying th
 1. Which random effects can you incorporate into the mem_acc models without running into convergence issues? (with fixed effects of `sleep_wake*session`)
 2. If we include vocabulary as a fixed effect, how should we incorporate it as a random slope in the model? *(hint: can the slope for vocabulary vary between participants? what about between items?)*
 
-```{r}
+```{r  eval = FALSE, class.source = 'fold-hide'}
 # Question 1 - only sleep_wake slopes can be incorporated 
 mem_acc_3 <- glmer(acc ~ sleep_wake*session + (1+sleep_wake+session|ID) + (1+sleep_wake|item), family = "binomial", data = pn_long) # nope
 
-mem_acc_3 <- glmer(acc ~ sleep_wake*session + (1+sleep_wake|ID) + (1+sleep_wake+session|item), family = "binomial", data = pn_long) #nope 
+mem_acc_3 <- glmer(acc ~ sleep_wake*session + (1+sleep_wake|ID) + (1+sleep_wake+session|item), family = "binomial", data = pn_long) # nope 
+
+# Question 2 
+# (1+vocab_s|item) only
 ```
 
 ### Other ways of dealing with complex models

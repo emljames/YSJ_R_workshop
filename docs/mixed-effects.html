@@ -469,7 +469,9 @@ div.tocify {
 <li>Better able to capture variation in the data (averaging always loses some)<br />
 </li>
 <li>Can easily incorporate a range of continuous and categorical predictors</li>
-<li>Allow us to make inferences beyond our specific sample of participants <em>and</em> specific sample of stimuli (cf. F1 and F2 analyses in language research)</li>
+<li>Allow us to make inferences beyond our specific sample of participants <em>and</em> specific sample of stimuli (cf. F1 and F2 analyses in language research)<br />
+</li>
+<li>Can handle missing data pretty well</li>
 </ul>
 <p>But there are some challenges, including:</p>
 <ul>
@@ -501,21 +503,21 @@ pn_long &lt;- read_csv(&quot;https://raw.githubusercontent.com/emljames/YSJ_R_wo
 <li>Effect code the <code>session</code> predictor, such that they are similarly coded to -1 and 1.</li>
 <li>Center and scale the <code>vocab</code> predictor, storing it as <code>vocab_s</code>.</li>
 </ol>
-<pre class="r"><code># Q1 - Sleep-wake predictor
+<pre class="r fold-hide"><code># Q1 - Sleep-wake predictor
 pn_long$sleep_wake &lt;- as.factor(pn_long$sleep_wake)
 contrasts(pn_long$sleep_wake) &lt;- c(-1, 1)
 contrasts(pn_long$sleep_wake)</code></pre>
 <pre><code>##       [,1]
 ## sleep   -1
 ## wake     1</code></pre>
-<pre class="r"><code># Q2 - Session predictor
+<pre class="r fold-hide"><code># Q2 - Session predictor
 pn_long$session &lt;- as.factor(pn_long$session)
 contrasts(pn_long$sleep_wake) &lt;- c(-1, 1)
 contrasts(pn_long$sleep_wake) </code></pre>
 <pre><code>##       [,1]
 ## sleep   -1
 ## wake     1</code></pre>
-<pre class="r"><code># Q3 -  Vocabulary predictor
+<pre class="r fold-hide"><code># Q3 -  Vocabulary predictor
 pn_long$vocab_s &lt;- scale(pn_long$vocab, center = TRUE, scale = TRUE)</code></pre>
 </div>
 </div>
@@ -650,7 +652,7 @@ plot(mem_rt_inv)</code></pre>
 <li>Now try adding random slopes for the effect of <code>session</code> as well. What happens?</li>
 </ol>
 <p><em>Hint: some people find scientific notation really difficult to read. You can run <code>options(scipen=999)</code> in the console to turn it off!</em></p>
-<pre class="r"><code># Question 1 
+<pre class="r fold-hide"><code># Question 1 
 summary(mem_rt_inv1)
 
 # Question 2
@@ -754,9 +756,9 @@ summary(mem_acc_2)</code></pre>
 <p>Statistical assumptions for binomial models are perhaps less intuitive and less-familiar. Delving too deeply into these issues is beyond the scope of this course, but I highly recommend looking into the <em>DHARMa</em> package (Hartig, 2020). The <a href="https://cran.r-project.org/web/packages/DHARMa/vignettes/DHARMa.html">vignette</a> provides a very thorough tutorial of how to use and interpret the tools.</p>
 <p>This package is best run on simulated residuals from the model, but let’s look at the residuals for demonstration purposes.</p>
 <pre class="r"><code>#install.packages(&quot;DHARMa&quot;)
-library(DHARMa)</code></pre>
-<pre><code>## This is DHARMa 0.3.2.0. For overview type &#39;?DHARMa&#39;. For recent changes, type news(package = &#39;DHARMa&#39;) Note: Syntax of plotResiduals has changed in 0.3.0, see ?plotResiduals for details</code></pre>
-<pre class="r"><code>plotQQunif(mem_acc_2)</code></pre>
+library(DHARMa)
+
+plotQQunif(mem_acc_2)</code></pre>
 <p><img src="mixed-effects_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 </div>
 </div>
@@ -797,7 +799,7 @@ mem_acc_v1 &lt;- glmer(acc ~ vocab_s + sleep_wake*session + (1|ID) + (1|item), f
 <li>In <code>mem_acc_v1</code>, we incorporated vocabulary as a fixed effect alongside the sleep_wake*session interaction. Keeping only random intercepts, try fitting a more complex model that includes vocabulary in a three-way interaction. Is it worth keeping in the model?</li>
 <li>How about either of the two-way interaction terms? (hint, you can specify each one using <code>*</code> or <code>:</code>)</li>
 </ol>
-<pre class="r"><code># Question 1
+<pre class="r fold-hide"><code># Question 1
 mem_acc_v2 &lt;- glmer(acc ~ vocab_s*sleep_wake*session + (1|ID) + (1|item), family = &quot;binomial&quot;, data = pn_long_v)
 anova(mem_acc_v1, mem_acc_v2)
 
@@ -837,13 +839,13 @@ anova(mem_acc_v1, mem_acc_v4)</code></pre>
 <li>Which random effects can you incorporate into the mem_acc models without running into convergence issues? (with fixed effects of <code>sleep_wake*session</code>)</li>
 <li>If we include vocabulary as a fixed effect, how should we incorporate it as a random slope in the model? <em>(hint: can the slope for vocabulary vary between participants? what about between items?)</em></li>
 </ol>
-<pre class="r"><code># Question 1 - only sleep_wake slopes can be incorporated 
-mem_acc_3 &lt;- glmer(acc ~ sleep_wake*session + (1+sleep_wake+session|ID) + (1+sleep_wake|item), family = &quot;binomial&quot;, data = pn_long) # nope</code></pre>
-<pre><code>## Warning in checkConv(attr(opt, &quot;derivs&quot;), opt$par, ctrl = control$checkConv, : Model failed to converge with max|grad| = 0.00717289 (tol = 0.002,
-## component 1)</code></pre>
-<pre class="r"><code>mem_acc_3 &lt;- glmer(acc ~ sleep_wake*session + (1+sleep_wake|ID) + (1+sleep_wake+session|item), family = &quot;binomial&quot;, data = pn_long) #nope </code></pre>
-<pre><code>## Warning in checkConv(attr(opt, &quot;derivs&quot;), opt$par, ctrl = control$checkConv, : Model failed to converge with max|grad| = 0.0187507 (tol = 0.002,
-## component 1)</code></pre>
+<pre class="r fold-hide"><code># Question 1 - only sleep_wake slopes can be incorporated 
+mem_acc_3 &lt;- glmer(acc ~ sleep_wake*session + (1+sleep_wake+session|ID) + (1+sleep_wake|item), family = &quot;binomial&quot;, data = pn_long) # nope
+
+mem_acc_3 &lt;- glmer(acc ~ sleep_wake*session + (1+sleep_wake|ID) + (1+sleep_wake+session|item), family = &quot;binomial&quot;, data = pn_long) # nope 
+
+# Question 2 
+# (1+vocab_s|item) only</code></pre>
 </div>
 <div id="other-ways-of-dealing-with-complex-models" class="section level3">
 <h3>Other ways of dealing with complex models</h3>
