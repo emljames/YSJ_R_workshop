@@ -8,6 +8,8 @@ navbar:
     href: index.html
   - text: "Before the workshop"
     href: setup.html
+  - text: "Linear models in R"
+    href: regression-models.html
   - text: "Additional resources"
     href: resources.html
 output:

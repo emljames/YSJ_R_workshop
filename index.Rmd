@@ -63,7 +63,7 @@ Two days of a new programming language is exhausting. Virtual meetings are exhau
 
 **15:30--17:00:**    Fitting mixed effects models using lme4 *(resources coming soon)*
 
-*Please complete the feedback form! - coming soon*
+*Please complete the [feedback form!](https://docs.google.com/forms/d/e/1FAIpQLSfdHzPS-VjY_8MR_MzTyko52owQ_rqdaCpXc8ytV5Gx2daK1A/viewform?usp=sf_link)*
 
 
 # Interacting during the workshop

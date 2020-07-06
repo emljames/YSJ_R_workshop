@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Emma James" />
+
+
+<title>Introduction to Mixed Effects Models</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/readable.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 66px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 71px;
+  margin-top: -71px;
+}
+.section h2 {
+  padding-top: 71px;
+  margin-top: -71px;
+}
+.section h3 {
+  padding-top: 71px;
+  margin-top: -71px;
+}
+.section h4 {
+  padding-top: 71px;
+  margin-top: -71px;
+}
+.section h5 {
+  padding-top: 71px;
+  margin-top: -71px;
+}
+.section h6 {
+  padding-top: 71px;
+  margin-top: -71px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">YSJ R Workshop</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="setup.html">Before the workshop</a>
+</li>
+<li>
+  <a href="regression-models.html">Linear models in R</a>
+</li>
+<li>
+  <a href="resources.html">Additional resources</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Introduction to Mixed Effects Models</h1>
+<h4 class="author">Emma James</h4>
+
+</div>
+
+
+<div id="overview" class="section level1">
+<h1>Overview</h1>
+<div id="questions" class="section level3">
+<h3>Questions</h3>
+<ul>
+<li>What is a mixed effects model?<br />
+</li>
+<li>Why might I want to use a mixed effects model?<br />
+</li>
+<li>How do I incorporate different random intercepts into my model?<br />
+</li>
+<li>How do I incorporate random slopes into my model?<br />
+</li>
+<li>What random effects should I include?<br />
+</li>
+<li>How can I model accuracy data?<br />
+</li>
+<li>How do I interpret model output?<br />
+</li>
+<li>How can I compare models?</li>
+<li>What is non-convergence and do I deal with it?<br />
+</li>
+<li>How do I write up the results of a mixed effects model?</li>
+</ul>
+</div>
+<div id="objectives" class="section level3">
+<h3>Objectives</h3>
+<ul>
+<li>Describe how mixed effects models differ from standard (non-hierarchical) regression models<br />
+</li>
+<li>Describe the difference between fixed and random effects<br />
+</li>
+<li>Fit a linear mixed effects model with random intercepts<br />
+</li>
+<li>Fit a linear mixed effects model with random slopes<br />
+</li>
+<li>Fit a binomial mixed effects regression model</li>
+<li>Compare the fit of two different mixed effects models<br />
+</li>
+<li>Interpret the output of a mixed effects model</li>
+<li>Consider different approaches to model fitting and convergence</li>
+</ul>
+</div>
+</div>
+<div id="what-is-a-mixed-effects-model" class="section level1">
+<h1>What is a mixed effects model?</h1>
+<p>In our regression model, we only considered one source of variance - the random sample of participants that we tested from the population. In mixed effects models, we can consider more than one source. Often in psychology experiments, we might also want to consider the sample of stimuli that we incorporated (from all possible stimuli that we could have used). Just as we have some participants that show higher performance than others, we will likely have some items that</p>
+<div id="fixed-effects" class="section level2">
+<h2>Fixed effects</h2>
+</div>
+<div id="random-effects" class="section level2">
+<h2>Random effects</h2>
+<p>Random effects have to be categorical - they are modelling <em>clusters</em> of observations in the dataset, so we are dealing with sub-samples.</p>
+<div id="random-intercepts" class="section level3">
+<h3>Random intercepts</h3>
+</div>
+<div id="random-slopes" class="section level3">
+<h3>Random slopes</h3>
+</div>
+<div id="benefits-and-costs" class="section level3">
+<h3>Benefits (and costs)</h3>
+<ul>
+<li>Can make use of all the data you collected without breaking assumption of independence<br />
+</li>
+<li>Better able to capture variation in the data (averaging always loses some)<br />
+</li>
+<li>Allow us to make inferences beyond our specific sample of participants <em>and</em> specific sample of stimuli (cf. F1 and F2 analyses in language research)</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="preparing-the-data" class="section level1">
+<h1>Preparing the data</h1>
+<div id="loading-the-data" class="section level3">
+<h3>Loading the data</h3>
+<p>We will be working with the same dataset as in the regression modelling introduction. This time, we’ll be working directly with the <em>long</em> dataframe that we read in. You might still have it in your environment, but if not then you can re-load it as follows.</p>
+<pre class="r"><code>library(tidyverse)
+
+pn_long &lt;- read_csv(&quot;https://raw.githubusercontent.com/emljames/YSJ_R_workshop/master/data/AMPM_subset.csv&quot;)</code></pre>
+</div>
+<div id="formatting-the-predictors" class="section level3">
+<h3>Formatting the predictors</h3>
+<p>As with the standard regression model, the first step is to make sure that our predictors are as we would want. You can repeat the steps from the last session to do this, just using the <code>pn_long</code> dataframe now rather than our participant averages.</p>
+<p><strong>Exercise:</strong></p>
+<ul>
+<li>Effect code the <code>sleep_wake</code> predictor, such that “wake” is -1 and “sleep” is +1. <em>Remember, you might need to re-format the variable as a factor!</em></li>
+<li>Effect code the <code>session</code> predictor, such that they are similarly coded to -1 and 1.</li>
+<li>Center and scale the <code>vocab</code> predictor, storing it as <code>vocab_s</code>.</li>
+</ul>
+<pre class="r"><code>pn_long$sleep_wake &lt;- as.factor(pn_long$sleep_wake)
+pn_long$session &lt;- as.factor(pn_long$session)
+
+contrasts(pn_long$sleep_wake) &lt;- c(-1, 1)
+contrasts(pn_long$sleep_wake)</code></pre>
+<pre><code>##       [,1]
+## sleep   -1
+## wake     1</code></pre>
+<pre class="r"><code>contrasts(pn_long$sleep_wake) &lt;- c(-1, 1)
+contrasts(pn_long$sleep_wake) </code></pre>
+<pre><code>##       [,1]
+## sleep   -1
+## wake     1</code></pre>
+<pre class="r"><code>pn_long$vocab_s &lt;- scale(pn_long$vocab, center = TRUE, scale = TRUE)</code></pre>
+</div>
+</div>
+<div id="fitting-a-linear-mixed-effects-model" class="section level1">
+<h1>Fitting a linear mixed effects model</h1>
+<p>Each participant in our dataset was trained on 24 new words. These were actually 2 lists of 12 words - they learned one list for each of the sleep/wake conditions, and the order was counterbalanced across participants. So rather than computing average scores like we did in the last chapter, we want to include all these datapoints for each participant.</p>
+<p>This means that we have two types of random effect in the dataset:</p>
+<ul>
+<li>Participant <code>ID</code> - we have multiple observations (words) collected from the same person</li>
+<li><code>item</code> trained - we have multiple responses (participants) for each word</li>
+</ul>
+<p>One of the most frequently used packages for mixed effects modelling is <code>lme4</code>. For linear models, <code>lme4</code> doesn’t provide significant tests by default. This is in part because there are a few different ways that one could obtain <em>p</em>-values from these models. You can read about these further down the line if you choose (e.g., <a href="https://link.springer.com/article/10.3758/s13428-016-0809-y">Luke, 2016</a>. However, for today we’ll also load <code>lmerTest</code> - a handy package that does this for us.</p>
+<pre class="r"><code>library(lme4)
+library(lmerTest)  # Note, we might have to install this first! </code></pre>
+<div id="incorporating-random-intercepts" class="section level3">
+<h3>Incorporating random intercepts</h3>
+<p>Let’s start with the response time data this time. We use the <code>lmer()</code> function to fit a <em>l</em>inear <em>m</em>ixed <em>e</em>ffects <em>r</em>egression. The first argument should look familiar from the last chapter: we enter the formula to specify our outcome measure (<code>RT</code>) and predictors of interest (now “fixed effects”, <code>sleep_wake*session</code>). The last part should look familiar too - we need to tell it where to find the dataset.</p>
+<pre class="r"><code>mem_rt_1 &lt;- lmer(RT ~ sleep_wake*session + (1|ID) + (1|item), data = pn_long)</code></pre>
+<p>…then you can see we have two extra bits to specify random intercepts. <code>(1|ID)</code> specifies that we will model varying intercepts per participant ID, and <code>(1|item)</code> specifies varying intercepts per word item. The <code>1</code> is R notation for the intercept - we could specify 1 in our fixed effects if we wanted, but there’s no need as it’s automatically assumed.</p>
+<p>Let’s call <code>summary()</code> on our fitted model to see the results:</p>
+<pre class="r"><code>summary(mem_rt_1)</code></pre>
+<pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [&#39;lmerModLmerTest&#39;]
+## Formula: RT ~ sleep_wake * session + (1 | ID) + (1 | item)
+##    Data: pn_long
+## 
+## REML criterion at convergence: 8075.2
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -1.4294 -0.5214 -0.2590  0.1489  5.2558 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev.
+##  ID       (Intercept)  88679   297.8   
+##  item     (Intercept)  80437   283.6   
+##  Residual             769982   877.5   
+## Number of obs: 492, groups:  ID, 34; item, 24
+## 
+## Fixed effects:
+##                      Estimate Std. Error      df t value Pr(&gt;|t|)    
+## (Intercept)           1780.72     102.68   52.96  17.343  &lt; 2e-16 ***
+## sleep_wake1             20.48      61.67  467.85   0.332  0.73996    
+## session2              -213.29      81.34  449.98  -2.622  0.00904 ** 
+## sleep_wake1:session2   164.65      81.59  450.29   2.018  0.04418 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Correlation of Fixed Effects:
+##             (Intr) slp_w1 sessn2
+## sleep_wake1 -0.078              
+## session2    -0.450  0.101       
+## slp_wk1:ss2  0.074 -0.731 -0.026</code></pre>
+<p>The output follows a pretty similar structure to our earlier regression, but with some extra bits. We now have a section for <code>Random effects</code> - it tells us the parameters we had included in the model, and spread of those random intercepts around the grand mean (model intercept). We can see that participants are slightly more variable than items. It also helpfully reports the number of observations we modelled, and the numbers associated with each type of grouping - it’s important to check that these are as you would expect!</p>
+</div>
+<div id="incorporating-random-slopes" class="section level3">
+<h3>Incorporating random slopes</h3>
+<p>Adding random intercepts has dealt with our violation of independence (the model now knows that there are clusters of observations in the data). But at the moment it’s only varying the intercepts for those clusters - different participants/items have different average responses, but we haven’t considered that they might differ in their response to the predictor variables. To add random slope to the model, we add it to our specification of the random effects in the formula. Let’s start by adding a single by-participant random slope for the effect of sleep_wake condition, incorporating variation in how different participants responded to the sleep-wake manipulation.</p>
+<pre class="r"><code>mem_rt_2 &lt;- lmer(RT ~ sleep_wake*session + (1+sleep_wake|ID) + (1|item), data = pn_long)
+
+summary(mem_rt_2)</code></pre>
+<pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [&#39;lmerModLmerTest&#39;]
+## Formula: RT ~ sleep_wake * session + (1 + sleep_wake | ID) + (1 | item)
+##    Data: pn_long
+## 
+## REML criterion at convergence: 8065
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -1.9088 -0.4991 -0.2450  0.1593  4.8792 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev. Corr
+##  ID       (Intercept) 100509   317.0        
+##           sleep_wake1  34439   185.6    0.88
+##  item     (Intercept)  83241   288.5        
+##  Residual             736676   858.3        
+## Number of obs: 492, groups:  ID, 34; item, 24
+## 
+## Fixed effects:
+##                      Estimate Std. Error      df t value Pr(&gt;|t|)    
+## (Intercept)           1808.47     104.69   53.13  17.275  &lt; 2e-16 ***
+## sleep_wake1             68.57      70.14   67.61   0.978  0.33179    
+## session2              -217.49      79.64  436.22  -2.731  0.00657 ** 
+## sleep_wake1:session2   150.48      79.94  438.15   1.882  0.06045 .  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Correlation of Fixed Effects:
+##             (Intr) slp_w1 sessn2
+## sleep_wake1  0.194              
+## session2    -0.433  0.072       
+## slp_wk1:ss2  0.062 -0.636 -0.015</code></pre>
+<p>Note that this actually adds <em>two</em> more parameters to the model - as it also models the correlation between the intercept and slope variability (more on this later).</p>
+<p>A nice way of viewing the variability we’ve modelled is to inspect the random effect estimates:</p>
+<pre class="r"><code># coef(mem_rt_2)$ID      # whole dataframe
+head(coef(mem_rt_2)$ID)  # print top of dataframe </code></pre>
+<pre><code>##          (Intercept) sleep_wake1  session2 sleep_wake1:session2
+## AmPm02a0    1729.943    27.42804 -217.4899             150.4842
+## AmPm0a0c    1782.734    13.01427 -217.4899             150.4842
+## AmPm0a7c    1623.551   -52.05733 -217.4899             150.4842
+## AmPm0cde    1516.940  -104.54400 -217.4899             150.4842
+## AmPm10e8    1742.432    19.53950 -217.4899             150.4842
+## AmPm181c    2318.392   369.36612 -217.4899             150.4842</code></pre>
+<p>… we can see that participants vary in their intercept (some are faster on average to name the pictures than others). We can also see that participants vary in how much they vary in speed between the sleep_wake conditions. The next two columns (session, the interaction) show identical values for all participants: this is because we’ve not incorporated this variation in the model.</p>
+<p><strong>EXERCISE:</strong></p>
+<ul>
+<li>What would you expect to see if you ran the code <code>coef(mem_rt_2$item)</code>? Try it to see if your predictions were correct.<br />
+</li>
+<li>Some researchers and statisticians advocate for <em>maximally specified random effects</em> - random slopes for each fixed effect (and interactions). Can you work out the correct syntax?<br />
+</li>
+<li>…what happens when you try to run it?</li>
+</ul>
+<pre class="r"><code>mem_rt_max &lt;- lmer(RT ~ sleep_wake*session + (1+sleep_wake*session|ID) + (1+sleep_wake*session|item), data = pn_long)</code></pre>
+</div>
+<div id="checking-assumptions" class="section level3">
+<h3>Checking assumptions</h3>
+<p>Again, there are various ways of checking assumptions of mixed effects models. A linear mixed effects model has many similar assumptions to a standard linear regression, including normlaity of residuals. Plotting the model will enable us to inspect this.</p>
+<pre class="r"><code>plot(mem_rt_2)</code></pre>
+<p><img src="mixed-effects_files/figure-html/unnamed-chunk-9-1.png" width="672" /> Perhaps unsurprisingly, the response time data is skewed, leaving a poor fit of the model for the positive tail. We can deal with these issues in the same ways as we deal with skewed data in traditional analyses, and there may be preferred protocols in different fields. This might involving removing outliers above certain condition thresholds, and/or performing some kind of data transformation (e.g., inverse, log, Box-Cox)</p>
+<p>You can do this transformation within your dataframe- compute a new variable, and then use this transformed version in your model. For simple transformations, you can even do this directly in the model formula. For example, rather than listing <code>RT</code> as the dependent variable, we can specify that we want to use the inverse transformation by listing <code>1/RT</code>.</p>
+<pre class="r"><code>mem_rt_inv &lt;- lmer(1/RT ~ sleep_wake*session + (1+sleep_wake|ID) + (1|item), data = pn_long)
+
+plot(mem_rt_inv)</code></pre>
+<p><img src="mixed-effects_files/figure-html/unnamed-chunk-10-1.png" width="672" /> You can see that transforming the data has improved the distribution of the residuals.</p>
+<p>= # Fitting a binomial mixed effects logistic regression model</p>
+</div>
+</div>
+<div id="comparing-complex-models" class="section level1">
+<h1>Comparing complex models</h1>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

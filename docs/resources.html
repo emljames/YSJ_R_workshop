@@ -23,6 +23,7 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 
@@ -248,6 +249,9 @@ $(document).ready(function () {
 </style>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
 
 
 
@@ -354,6 +358,9 @@ div.tocify {
   <a href="setup.html">Before the workshop</a>
 </li>
 <li>
+  <a href="regression-models.html">Linear models in R</a>
+</li>
+<li>
   <a href="resources.html">Additional resources</a>
 </li>
       </ul>
@@ -365,6 +372,14 @@ div.tocify {
 </div><!--/.navbar -->
 
 <div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
 
 
 
@@ -391,10 +406,14 @@ div.tocify {
 <div id="mixed-effects-models" class="section level1">
 <h1>Mixed effects models</h1>
 <ul>
+<li><a href="http://mfviz.com/hierarchical-models/">Beautiful visualisations</a> to help in understanding random intercepts and random slopes</li>
 <li>Bodo Winter’s tutorial - <a href="http://www.bodowinter.com/uploads/1/2/9/3/129362560/bw_lme_tutorial1.pdf">Parts 1</a> &amp; <a href="http://www.bodowinter.com/uploads/1/2/9/3/129362560/bw_lme_tutorial2.pdf">2</a><br />
 </li>
 <li>Violet Brown’s <em>An approachable introduction to linear mixed effects modeling with implementation in R</em> - <a href="https://psyarxiv.com/9vghm/">pre-print</a><br />
 </li>
+<li>Singmann &amp; Kellen (2019) - <em>An introduction to mixed models for experimental psychology</em> - <a href="http://singmann.org/download/publications/singmann_kellen-introduction-mixed-models.pdf">pre-print of book chapter</a><br />
+</li>
+<li>Baayen, Davidson &amp; Bates (2008) - <em>Mixed-effects modeling with crossed random effects for subjects and items</em> - <a href="https://www.sciencedirect.com/science/article/pii/S0749596X07001398">paper</a> published in the Journal of Memory and Language (Bates is one of the creators of the <em>lme4</em> package)</li>
 <li>Meteyard &amp; Davies (2020) - <em>Best practice guidance for linear mixed-effects models in psychological science</em> - <a href="https://www.sciencedirect.com/science/article/pii/S0749596X20300061">paper</a> published in the Journal of Memory and Language</li>
 </ul>
 </div>
@@ -434,6 +453,11 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
 
 <script>
 $(document).ready(function ()  {
