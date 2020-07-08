@@ -39,3 +39,8 @@ You'll find cheatsheets for `dplyr`, `tidyr`, and `ggplot2` [here](https://rstud
 
 * Meteyard & Davies (2020) - *Best practice guidance for linear mixed-effects models in psychological science* - [paper](https://www.sciencedirect.com/science/article/pii/S0749596X20300061) published in the Journal of Memory and Language  
 
+### Coding categorical variables
+
+* [https://stats.idre.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/](https://stats.idre.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/) - a very comprehensive summary!   
+* [*How to capitalize upon a priori contrasts in linear (mixed) models: A tutorial*](https://www.sciencedirect.com/science/article/pii/S0749596X19300695). Schad et al. (2020)  
+

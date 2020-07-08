@@ -114,9 +114,10 @@ sd(pn_learn$mean_acc)
 
 Linear regression is used to model the relationship between one/more *predictor* variables and a continuous *outcome* measure (interval/ratio data). Note that although we talk about *predictors* and *outcomes*, the relationship is not necessarily causal.
 
-The model fits a single *regression line* that describes how the outcome measure changes in response to changes in the predictor variable(s). This line is described by two important components (*coefficients*):  
+The model fits a single *regression line* that describes how the outcome measure changes in response to changes in the predictor variable(s). This line is described by two important components (*coefficients*):   
+
 * **Intercept** - where the line crosses 0 on the x-axis (this doesn't have to be a value that exists in your data)  
-* **Slope** - how much does the outcome measure (y) change in response to a different in the predictor variable (x). This can be positive or negative: as x goes up, y could increase or decrease. 
+* **Slope** - how much does the outcome measure (y) change in response to a different in the predictor variable (x). This can be positive or negative: as x goes up, y could increase or decrease.  
 
 The fitted line will not predict each data point exactly - there will always be some error in the model that we have not accounted for in any given analysis. The differences between our observed data points and the fitted line are called *residuals*. 
 
@@ -264,7 +265,7 @@ contrasts(pn_wide$sleep_wake)
 For our `sleep_wake` condition, it's treating the "sleep" condition as the baseline level, and "wake" as treatment. It's automatically assigned this way because "sleep" appears first in the alphabet, which probably isn't that helpful in the majority of situations. I want to consider "wake" as the baseline, so we can change this reference level using the `relevel()` function. 
 
 ```{r}
-pn_wide$sleep_wake <- relevel(pn_wide$sleep_wake, ref = "wake")
+pn_wide$sleep_wake <- factor(pn_wide$sleep_wake, levels = c("wake", "sleep"))
 contrasts(pn_wide$sleep_wake)
 ```
 

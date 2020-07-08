@@ -55,9 +55,10 @@ Two days of a new programming language is exhausting. Virtual meetings are exhau
 
 **LUNCH BREAK**
 
-**13:30--14:30:**    [Getting started with regression models in R](https://emljames.github.io/YSJ_R_workshop/regression-models.html) 
+**13:30--14:40:**    [Getting started with regression models in R](https://emljames.github.io/YSJ_R_workshop/regression-models.html) 
 
-**14:30--15:00:**    [Introduction to mixed effects models](https://emljames.github.io/YSJ_R_workshop/mixed-effects.html)
+**14:40--15:00:**    [Introduction to mixed effects models](https://emljames.github.io/YSJ_R_workshop/mixed-effects.html)
+
 **BREAK**
 
 **15:30--17:00:**    [Fitting mixed effects models using lme4](https://emljames.github.io/YSJ_R_workshop/mixed-effects.html#Preparing_the_data)

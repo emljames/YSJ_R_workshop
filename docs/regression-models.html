@@ -520,9 +520,12 @@ sd(pn_learn$mean_acc)</code></pre>
 <div id="what-is-linear-regression" class="section level1">
 <h1>What is linear regression?</h1>
 <p>Linear regression is used to model the relationship between one/more <em>predictor</em> variables and a continuous <em>outcome</em> measure (interval/ratio data). Note that although we talk about <em>predictors</em> and <em>outcomes</em>, the relationship is not necessarily causal.</p>
-<p>The model fits a single <em>regression line</em> that describes how the outcome measure changes in response to changes in the predictor variable(s). This line is described by two important components (<em>coefficients</em>):<br />
-* <strong>Intercept</strong> - where the line crosses 0 on the x-axis (this doesn’t have to be a value that exists in your data)<br />
-* <strong>Slope</strong> - how much does the outcome measure (y) change in response to a different in the predictor variable (x). This can be positive or negative: as x goes up, y could increase or decrease.</p>
+<p>The model fits a single <em>regression line</em> that describes how the outcome measure changes in response to changes in the predictor variable(s). This line is described by two important components (<em>coefficients</em>):</p>
+<ul>
+<li><strong>Intercept</strong> - where the line crosses 0 on the x-axis (this doesn’t have to be a value that exists in your data)<br />
+</li>
+<li><strong>Slope</strong> - how much does the outcome measure (y) change in response to a different in the predictor variable (x). This can be positive or negative: as x goes up, y could increase or decrease.</li>
+</ul>
 <p>The fitted line will not predict each data point exactly - there will always be some error in the model that we have not accounted for in any given analysis. The differences between our observed data points and the fitted line are called <em>residuals</em>.</p>
 <div id="statistical-assumptions" class="section level3">
 <h3>Statistical assumptions</h3>
@@ -694,7 +697,7 @@ contrasts(pn_wide$sleep_wake)</code></pre>
 ## sleep    0
 ## wake     1</code></pre>
 <p>For our <code>sleep_wake</code> condition, it’s treating the “sleep” condition as the baseline level, and “wake” as treatment. It’s automatically assigned this way because “sleep” appears first in the alphabet, which probably isn’t that helpful in the majority of situations. I want to consider “wake” as the baseline, so we can change this reference level using the <code>relevel()</code> function.</p>
-<pre class="r"><code>pn_wide$sleep_wake &lt;- relevel(pn_wide$sleep_wake, ref = &quot;wake&quot;)
+<pre class="r"><code>pn_wide$sleep_wake &lt;- factor(pn_wide$sleep_wake, levels = c(&quot;wake&quot;, &quot;sleep&quot;))
 contrasts(pn_wide$sleep_wake)</code></pre>
 <pre><code>##       sleep
 ## wake      0
