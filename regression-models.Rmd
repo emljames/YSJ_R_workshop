@@ -262,7 +262,7 @@ pn_wide$sleep_wake <- as.factor(pn_wide$sleep_wake)
 contrasts(pn_wide$sleep_wake)
 ```
 
-For our `sleep_wake` condition, it's treating the "sleep" condition as the baseline level, and "wake" as treatment. It's automatically assigned this way because "sleep" appears first in the alphabet, which probably isn't that helpful in the majority of situations. I want to consider "wake" as the baseline, so we can change this reference level using the `relevel()` function. 
+For our `sleep_wake` condition, it's treating the "sleep" condition as the baseline level, and "wake" as treatment. It's automatically assigned this way because "sleep" appears first in the alphabet, which probably isn't that helpful in the majority of situations. I want to consider "wake" as the baseline, so we can reorder the factor levels using the `factor()` function we used yesterday. 
 
 ```{r}
 pn_wide$sleep_wake <- factor(pn_wide$sleep_wake, levels = c("wake", "sleep"))
